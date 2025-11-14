@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" stylesheets="@dashboard.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.br.renzoluigi.ciprianjospdv.DashboardController">
+   <children>
+      <AnchorPane fx:id="main_form" prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <BorderPane layoutX="450.0" layoutY="200.0" prefHeight="600.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <top>
+                  <AnchorPane prefHeight="45.0" prefWidth="200.0" styleClass="semi-top-form" BorderPane.alignment="CENTER">
+                     <children>
+                        <AnchorPane layoutX="0.4" layoutY="1.2" prefHeight="35.0" prefWidth="1100.0" styleClass="top-form" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="1.0">
+                           <children>
+                              <ImageView fitHeight="35.0" fitWidth="55.0" layoutX="14.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../../ciprianjos-logo-sem-fundo.png" />
+                                 </image>
+                              </ImageView>
+                              <Label layoutX="67.0" layoutY="9.0" text="Sistema de gestão Ciprianjos">
+                                 <font>
+                                    <Font name="Tahoma" size="15.0" />
+                                 </font></Label>
+                              <Button fx:id="close" layoutX="1041.1999999999998" layoutY="2.8" mnemonicParsing="false" onAction="#close" prefHeight="25.0" prefWidth="65.0" styleClass="close" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0">
+                                 <font>
+                                    <Font name="Tahoma Bold" size="12.0" />
+                                 </font>
+                                 <graphic>
+                                    <ImageView fitHeight="17.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../../../x-icon.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic></Button>
+                              <Button fx:id="minimize" layoutX="999.0" layoutY="2.0" mnemonicParsing="false" onAction="#minimize" prefHeight="25.0" prefWidth="0.0" styleClass="minimize">
+                                 <font>
+                                    <Font name="Tahoma Bold" size="12.0" />
+                                 </font>
+                                 <graphic>
+                                    <ImageView fitHeight="21.0" fitWidth="17.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../../../minimize-icon.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children></AnchorPane>
+                     </children></AnchorPane>
+               </top>
+               <left>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <AnchorPane layoutY="178.0" prefHeight="550.0" prefWidth="200.0" styleClass="nav-form" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <ImageView fitHeight="90.0" fitWidth="75.0" layoutX="63.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../../../icon-white.png" />
+                                 </image>
+                              </ImageView>
+                              <Label layoutX="45.0" layoutY="129.0" text="Bem-vindo(a)," textFill="WHITE">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font></Label>
+                              <Label fx:id="name" alignment="CENTER" layoutY="155.0" prefHeight="17.0" prefWidth="200.0" text="(NOME)" textFill="WHITE">
+                                 <font>
+                                    <Font name="Arial Bold" size="20.0" />
+                                 </font>
+                              </Label>
+                              <Line endX="68.5" layoutX="116.0" layoutY="196.0" startX="-100.0" stroke="WHITE" />
+                              <Button fx:id="home_button" layoutX="10.0" layoutY="235.0" mnemonicParsing="false" onAction="#switchPane" prefHeight="35.0" prefWidth="180.0" styleClass="nav-button" text="Menu">
+                                 <graphic>
+                                    <ImageView fitHeight="24.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../../../home-icon.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic></Button>
+                              <Button fx:id="addProducts_button" layoutX="9.0" layoutY="270.0" mnemonicParsing="false" onAction="#switchPane" prefHeight="35.0" prefWidth="180.0" styleClass="nav-button" text="Adicionar produtos">
+                                 <graphic>
+                                    <ImageView fitHeight="24.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../../../plus.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="orders_button" layoutX="10.0" layoutY="305.0" mnemonicParsing="false" onAction="#switchPane" prefHeight="35.0" prefWidth="180.0" styleClass="nav-button" text="Pedidos">
+                                 <graphic>
+                                    <ImageView fitHeight="24.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../../../box.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="logout" layoutX="10.0" layoutY="513.0" mnemonicParsing="false" onAction="#logout" styleClass="logout">
+                                 <graphic>
+                                    <ImageView fitHeight="19.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../../../exit-icon.png" />
+                                       </image></ImageView>
+                                 </graphic>
+                              </Button>
+                              <Label layoutX="51.0" layoutY="516.0" text="Sair" textFill="WHITE">
+                                 <font>
+                                    <Font name="Tahoma Bold" size="18.0" />
+                                 </font>
+                              </Label>
+                           </children></AnchorPane>
+                     </children>
+                  </AnchorPane>
+               </left>
+               <center>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <AnchorPane fx:id="home_pane" prefHeight="550.0" prefWidth="900.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <AnchorPane layoutX="13.0" layoutY="14.0" prefHeight="146.0" prefWidth="874.0">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <AnchorPane layoutX="14.0" layoutY="12.0" prefHeight="122.0" prefWidth="265.0" styleClass="card">
+                                       <children>
+                                          <ImageView fitHeight="68.0" fitWidth="60.0" layoutX="14.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../../../../multiple-users-icon.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Label layoutX="74.0" layoutY="91.0" text="Número de vendas hoje" textFill="WHITE">
+                                             <font>
+                                                <Font name="Tahoma" size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="home_numberOrders" alignment="CENTER_RIGHT" layoutX="74.0" layoutY="14.0" prefHeight="20.0" prefWidth="169.0" text="0" textFill="WHITE">
+                                             <font>
+                                                <Font name="Tahoma Bold" size="16.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane layoutX="304.0" layoutY="12.0" prefHeight="122.0" prefWidth="265.0" styleClass="card">
+                                       <children>
+                                          <ImageView fitHeight="68.0" fitWidth="60.0" layoutX="14.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../../../../money-icon.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Label alignment="CENTER" layoutX="1.0" layoutY="91.0" prefHeight="20.0" prefWidth="264.0" text="Renda total" textFill="WHITE">
+                                             <font>
+                                                <Font name="Tahoma" size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="home_totalIncome" alignment="CENTER_RIGHT" layoutX="74.0" layoutY="14.0" prefHeight="20.0" prefWidth="169.0" text="R$ 0.0" textFill="WHITE">
+                                             <font>
+                                                <Font name="Tahoma Bold" size="16.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane layoutX="595.0" layoutY="12.0" prefHeight="122.0" prefWidth="265.0" styleClass="card">
+                                       <children>
+                                          <ImageView fitHeight="68.0" fitWidth="60.0" layoutX="16.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../../../../box.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Label layoutX="74.0" layoutY="91.0" text="Produtos disponíveis" textFill="WHITE">
+                                             <font>
+                                                <Font name="Tahoma" size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="home_availableProducts" alignment="CENTER_RIGHT" layoutX="74.0" layoutY="14.0" prefHeight="20.0" prefWidth="169.0" text="0" textFill="WHITE">
+                                             <font>
+                                                <Font name="Tahoma Bold" size="16.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </AnchorPane>
+                              <Line endX="774.0" layoutX="113.0" layoutY="179.0" startX="-100.0" stroke="#00a3ff" />
+                              <AnchorPane layoutX="13.0" layoutY="198.0" prefHeight="338.0" prefWidth="874.0">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <AnchorPane layoutX="14.0" layoutY="12.0" prefHeight="314.0" prefWidth="434.0">
+                                       <styleClass>
+                                          <String fx:value="white-bg" />
+                                          <String fx:value="shadow" />
+                                       </styleClass>
+                                       <children>
+                                          <AreaChart fx:id="home_incomeChart" layoutX="20.0" layoutY="12.0" prefHeight="290.0" prefWidth="395.0" title="Gráfico de renda">
+                                            <xAxis>
+                                              <CategoryAxis side="BOTTOM" />
+                                            </xAxis>
+                                            <yAxis>
+                                              <NumberAxis side="LEFT" />
+                                            </yAxis>
+                                          </AreaChart>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane layoutX="474.0" layoutY="12.0" prefHeight="314.0" prefWidth="386.0">
+                                       <styleClass>
+                                          <String fx:value="white-bg" />
+                                          <String fx:value="shadow" />
+                                       </styleClass>
+                                       <children>
+                                          <BarChart fx:id="home_ordersChart" layoutX="20.0" layoutY="12.0" prefHeight="290.0" prefWidth="350.0" title="Gráfico de pedidos">
+                                            <xAxis>
+                                              <CategoryAxis side="BOTTOM" />
+                                            </xAxis>
+                                            <yAxis>
+                                              <NumberAxis side="LEFT" />
+                                            </yAxis>
+                                          </BarChart>
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="addProducts_pane" prefHeight="550.0" prefWidth="900.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="522.0" prefWidth="286.0">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <AnchorPane layoutX="86.0" layoutY="14.0" prefHeight="130.0" prefWidth="115.0">
+                                       <styleClass>
+                                          <String fx:value="shadow" />
+                                          <String fx:value="white-bg" />
+                                       </styleClass>
+                                       <children>
+                                          <ImageView fx:id="addProducts_imageView" fitHeight="132.0" fitWidth="115.0" pickOnBounds="true" preserveRatio="true" />
+                                          <Button fx:id="addProducts_importButton" layoutY="107.0" mnemonicParsing="false" onAction="#addProductsImage" prefHeight="25.0" prefWidth="115.0" styleClass="import-button" text="Importar" />
+                                       </children>
+                                    </AnchorPane>
+                                    <Label layoutX="15.0" layoutY="184.0" text="Cód. de barras:">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="addProducts_barcode" layoutX="124.0" layoutY="182.0" styleClass="textfield" stylesheets="@dashboard.css" />
+                                    <ComboBox fx:id="addProducts_type" layoutX="124.0" layoutY="217.0" prefHeight="27.0" prefWidth="151.0" promptText="Escolha" styleClass="textfield" />
+                                    <TextField fx:id="addProducts_brand" layoutX="124.0" layoutY="255.0" styleClass="textfield" stylesheets="@dashboard.css" />
+                                    <TextField fx:id="addProducts_name" layoutX="124.0" layoutY="291.0" styleClass="textfield" stylesheets="@dashboard.css" />
+                                    <Label layoutX="82.0" layoutY="220.0" text="Tipo:">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="68.0" layoutY="257.0" text="Marca:">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="68.0" layoutY="293.0" text="Nome:">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="addProducts_quantity" layoutX="124.0" layoutY="324.0" styleClass="textfield" stylesheets="@dashboard.css" />
+                                    <TextField fx:id="addProducts_price" layoutX="124.0" layoutY="357.0" styleClass="textfield" stylesheets="@dashboard.css" />
+                                    <Button fx:id="addProducts_addButton" layoutX="33.0" layoutY="410.0" mnemonicParsing="false" onAction="#addProductsAdd" prefHeight="40.0" prefWidth="90.0" styleClass="add-button" text="Adicionar" />
+                                    <Button fx:id="addProducts_updateButton" layoutX="164.0" layoutY="410.0" mnemonicParsing="false" onAction="#addProductsUpdate" prefHeight="40.0" prefWidth="90.0" styleClass="update-button" text="Atualizar" />
+                                    <Button fx:id="addProducts_clearButton" layoutX="33.0" layoutY="468.0" mnemonicParsing="false" onAction="#addProductsClear" prefHeight="40.0" prefWidth="90.0" styleClass="clear-button" text="Limpar" />
+                                    <Button fx:id="addProducts_deleteButton" layoutX="163.0" layoutY="468.0" mnemonicParsing="false" onAction="#addProductsDelete" prefHeight="40.0" prefWidth="90.0" styleClass="delete-button" text="Deletar" />
+                                    <Label layoutX="29.0" layoutY="327.0" text="Quantidade:">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="70.0" layoutY="359.0" text="Preço:">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane layoutX="316.0" layoutY="14.0" prefHeight="522.0" prefWidth="570.0">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <TableView fx:id="addProducts_table" layoutX="10.0" layoutY="68.0" onMouseClicked="#addProductsSelect" prefHeight="440.0" prefWidth="550.0" stylesheets="@dashboard.css">
+                                      <columns>
+                                        <TableColumn id="column-header" fx:id="addProducts_col_barcode" prefWidth="103.0" text="Cód. de barras" />
+                                        <TableColumn fx:id="addProducts_col_type" prefWidth="76.0" text="Tipo" />
+                                          <TableColumn fx:id="addProducts_col_brand" prefWidth="88.0" text="Marca" />
+                                          <TableColumn fx:id="addProducts_col_name" prefWidth="133.0" text="Nome" />
+                                          <TableColumn fx:id="addProducts_col_price" prefWidth="71.0" text="Preço" />
+                                          <TableColumn fx:id="addProducts_col_quantity" prefWidth="78.0" text="Quantidade" />
+                                      </columns>
+                                    </TableView>
+                                    <TextField fx:id="addProducts_search" layoutX="10.0" layoutY="21.0" onAction="#addProductsSearch" prefHeight="30.0" prefWidth="250.0" promptText="Pesquisar" styleClass="search" />
+                                    <ImageView fitHeight="56.0" fitWidth="118.0" layoutX="455.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../../../ciprianjos-logo-sem-fundo.png" />
+                                       </image></ImageView>
+                                    <ImageView fitHeight="22.0" fitWidth="22.0" layoutX="14.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../../../search-icon.png" />
+                                       </image></ImageView>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="orders_pane" prefHeight="548.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="520.0" prefWidth="525.0">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <TableView fx:id="orders_table" layoutX="13.0" layoutY="10.0" prefHeight="500.0" prefWidth="500.0">
+                                      <columns>
+                                        <TableColumn fx:id="orders_col_type" prefWidth="93.0" text="Tipo" />
+                                        <TableColumn fx:id="orders_col_brand" prefWidth="98.0" text="Marca" />
+                                          <TableColumn fx:id="orders_col_name" prefWidth="134.0" text="Nome" />
+                                          <TableColumn fx:id="orders_col_quantity" prefWidth="100.0" text="Quantidade" />
+                                          <TableColumn fx:id="orders_col_price" prefWidth="74.0" text="Preço" />
+                                      </columns>
+                                    </TableView>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane layoutX="556.0" layoutY="14.0" prefHeight="520.0" prefWidth="330.0">
+                                 <styleClass>
+                                    <String fx:value="white-bg" />
+                                    <String fx:value="shadow" />
+                                 </styleClass>
+                                 <children>
+                                    <Label layoutX="97.0" layoutY="43.0" text="Tipo:">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <ComboBox fx:id="orders_type" layoutX="148.0" layoutY="41.0" onAction="#ordersListType" prefWidth="150.0" promptText="Escolha" styleClass="textfield" />
+                                    <Label layoutX="85.0" layoutY="81.0" text="Marca:">
+                                       <font>
+                                          <Font name="Tahoma" size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <ComboBox fx:id="orders_brand" layoutX="148.0" layoutY="79.0" onAction="#ordersListBrand" prefWidth="150.0" promptText="Escolha" styleClass="textfield" />
+                                    <Label layoutX="85.0" layoutY="117.0" text="Nome:">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <ComboBox fx:id="orders_name" layoutX="148.0" layoutY="115.0" onAction="#ordersListName" prefWidth="150.0" promptText="Escolha" styleClass="textfield" />
+                                    <Label layoutX="48.0" layoutY="155.0" text="Quantidade:">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Spinner fx:id="orders_quantity" layoutX="149.0" layoutY="153.0" styleClass="textfield" />
+                                    <Label layoutX="84.0" layoutY="237.0" text="Total:">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="orders_total" layoutX="149.0" layoutY="240.0" prefHeight="21.0" prefWidth="149.0" text="R$ 0.00">
+                                       <font>
+                                          <Font name="Arial" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="50.0" layoutY="276.0" prefHeight="27.0" prefWidth="78.0" text="Recebido:">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="orders_amount" layoutX="149.0" layoutY="276.0" onAction="#ordersAmount" styleClass="textfield" />
+                                    <Label layoutX="83.0" layoutY="312.0" text="Troco:">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="orders_balance" layoutX="149.0" layoutY="315.0" prefHeight="21.0" prefWidth="149.0" text="R$ 0.00">
+                                       <font>
+                                          <Font name="Arial" size="18.0" />
+                                       </font>
+                                    </Label>
+                                    <Button fx:id="orders_payButton" layoutX="202.0" layoutY="379.0" mnemonicParsing="false" onAction="#ordersPay" prefHeight="40.0" prefWidth="90.0" styleClass="pay-button" text="Pagar" />
+                                    <Button fx:id="orders_receiptButton" layoutX="38.0" layoutY="379.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="90.0" styleClass="receipt-button" text="Recibo" />
+                                    <Button fx:id="orders_nfeButton" layoutX="202.0" layoutY="440.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="90.0" styleClass="nfe-button" text="Gerar NFE" />
+                                    <Button fx:id="orders_clearButton" layoutX="38.0" layoutY="440.0" mnemonicParsing="false" onAction="#ordersClear" prefHeight="40.0" prefWidth="90.0" styleClass="clear-button" text="Limpar" />
+                                    <Line endX="157.0" layoutX="169.0" layoutY="357.0" startX="-165.0" stroke="#00a3ff" />
+                                    <Button fx:id="orders_addButton" layoutX="202.0" layoutY="192.0" mnemonicParsing="false" onAction="#ordersAdd" prefHeight="40.0" prefWidth="90.0" styleClass="add-button" text="Adicionar" />
+                                 </children>
+                              </AnchorPane>
+                           </children></AnchorPane>
+                     </children>
+                  </AnchorPane>
+               </center>
+            </BorderPane>
+         </children>
+      </AnchorPane>
+   </children>
+</StackPane>
