@@ -102,6 +102,7 @@ public class LoginController {
             alert.setHeaderText("Informe esse erro ao desenvolvedor");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
+            e.printStackTrace();
         }
 
     }

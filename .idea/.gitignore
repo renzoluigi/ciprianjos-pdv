@@ -3,11 +3,3 @@
 /httpRequests/
 /dataSources/
 /dataSources.local.xml
-*.mv.db
-*.trace.db
-*.lock.db
-*.temp.db
-*.h2.db
-*.db.old
-data/
-file/data/

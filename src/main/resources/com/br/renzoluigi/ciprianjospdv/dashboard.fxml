@@ -343,52 +343,52 @@
                                     <String fx:value="shadow" />
                                  </styleClass>
                                  <children>
-                                    <Label layoutX="97.0" layoutY="43.0" text="Tipo:">
+                                    <Label layoutX="97.0" layoutY="56.0" text="Tipo:">
                                        <font>
                                           <Font size="15.0" />
                                        </font>
                                     </Label>
-                                    <ComboBox fx:id="orders_type" layoutX="148.0" layoutY="41.0" onAction="#ordersListType" prefWidth="150.0" promptText="Escolha" styleClass="textfield" />
-                                    <Label layoutX="85.0" layoutY="81.0" text="Marca:">
+                                    <ComboBox fx:id="orders_type" layoutX="148.0" layoutY="54.0" onAction="#ordersListType" prefWidth="150.0" promptText="Escolha" styleClass="textfield" />
+                                    <Label layoutX="85.0" layoutY="94.0" text="Marca:">
                                        <font>
                                           <Font name="Tahoma" size="15.0" />
                                        </font>
                                     </Label>
-                                    <ComboBox fx:id="orders_brand" layoutX="148.0" layoutY="79.0" onAction="#ordersListBrand" prefWidth="150.0" promptText="Escolha" styleClass="textfield" />
-                                    <Label layoutX="85.0" layoutY="117.0" text="Nome:">
+                                    <ComboBox fx:id="orders_brand" layoutX="148.0" layoutY="92.0" onAction="#ordersListBrand" prefWidth="150.0" promptText="Escolha" styleClass="textfield" />
+                                    <Label layoutX="85.0" layoutY="130.0" text="Nome:">
                                        <font>
                                           <Font size="15.0" />
                                        </font>
                                     </Label>
-                                    <ComboBox fx:id="orders_name" layoutX="148.0" layoutY="115.0" onAction="#ordersListName" prefWidth="150.0" promptText="Escolha" styleClass="textfield" />
-                                    <Label layoutX="48.0" layoutY="155.0" text="Quantidade:">
+                                    <ComboBox fx:id="orders_name" layoutX="148.0" layoutY="128.0" onAction="#ordersListName" prefWidth="150.0" promptText="Escolha" styleClass="textfield" />
+                                    <Label layoutX="48.0" layoutY="168.0" text="Quantidade:">
                                        <font>
                                           <Font size="15.0" />
                                        </font>
                                     </Label>
-                                    <Spinner fx:id="orders_quantity" layoutX="149.0" layoutY="153.0" styleClass="textfield" />
-                                    <Label layoutX="84.0" layoutY="237.0" text="Total:">
+                                    <Spinner fx:id="orders_quantity" layoutX="149.0" layoutY="166.0" styleClass="textfield" />
+                                    <Label layoutX="84.0" layoutY="249.0" text="Total:">
                                        <font>
                                           <Font size="18.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="orders_total" layoutX="149.0" layoutY="240.0" prefHeight="21.0" prefWidth="149.0" text="R$ 0.00">
+                                    <Label fx:id="orders_total" layoutX="149.0" layoutY="252.0" prefHeight="21.0" prefWidth="149.0" text="R$ 0.00">
                                        <font>
                                           <Font name="Arial" size="18.0" />
                                        </font>
                                     </Label>
-                                    <Label layoutX="50.0" layoutY="276.0" prefHeight="27.0" prefWidth="78.0" text="Recebido:">
+                                    <Label layoutX="50.0" layoutY="288.0" prefHeight="27.0" prefWidth="78.0" text="Recebido:">
                                        <font>
                                           <Font size="18.0" />
                                        </font>
                                     </Label>
-                                    <TextField fx:id="orders_amount" layoutX="149.0" layoutY="276.0" onAction="#ordersAmount" styleClass="textfield" />
-                                    <Label layoutX="83.0" layoutY="312.0" text="Troco:">
+                                    <TextField fx:id="orders_amount" layoutX="149.0" layoutY="288.0" onAction="#ordersAmount" styleClass="textfield" />
+                                    <Label layoutX="83.0" layoutY="324.0" text="Troco:">
                                        <font>
                                           <Font size="18.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="orders_balance" layoutX="149.0" layoutY="315.0" prefHeight="21.0" prefWidth="149.0" text="R$ 0.00">
+                                    <Label fx:id="orders_balance" layoutX="149.0" layoutY="327.0" prefHeight="21.0" prefWidth="149.0" text="R$ 0.00">
                                        <font>
                                           <Font name="Arial" size="18.0" />
                                        </font>
@@ -398,7 +398,8 @@
                                     <Button fx:id="orders_nfeButton" layoutX="202.0" layoutY="440.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="90.0" styleClass="nfe-button" text="Gerar NFE" />
                                     <Button fx:id="orders_clearButton" layoutX="38.0" layoutY="440.0" mnemonicParsing="false" onAction="#ordersClear" prefHeight="40.0" prefWidth="90.0" styleClass="clear-button" text="Limpar" />
                                     <Line endX="157.0" layoutX="169.0" layoutY="357.0" startX="-165.0" stroke="#00a3ff" />
-                                    <Button fx:id="orders_addButton" layoutX="202.0" layoutY="192.0" mnemonicParsing="false" onAction="#ordersAdd" prefHeight="40.0" prefWidth="90.0" styleClass="add-button" text="Adicionar" />
+                                    <Button fx:id="orders_addButton" layoutX="202.0" layoutY="204.0" mnemonicParsing="false" onAction="#ordersAdd" prefHeight="40.0" prefWidth="90.0" styleClass="add-button" text="Adicionar" />
+                                    <TextField fx:id="orders_barcode" layoutX="8.0" layoutY="14.0" onAction="#ordersReadBarcode" prefHeight="27.0" prefWidth="315.0" styleClass="textfield" />
                                  </children>
                               </AnchorPane>
                            </children></AnchorPane>

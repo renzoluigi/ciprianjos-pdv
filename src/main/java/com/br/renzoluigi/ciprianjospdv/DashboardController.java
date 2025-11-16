@@ -154,6 +154,9 @@ public class DashboardController implements Initializable {
     @FXML
     private Label orders_balance;
 
+    @FXML
+    private TextField orders_barcode;
+
     private Alert alert;
 
     private double y = 0;
@@ -194,6 +197,7 @@ public class DashboardController implements Initializable {
             alert.setHeaderText("Informe esse erro ao desenvolvedor");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
+            e.printStackTrace();
         }
     }
 
@@ -219,6 +223,7 @@ public class DashboardController implements Initializable {
             alert.setHeaderText("Informe esse erro ao desenvolvedor");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
+            e.printStackTrace();
         }
     }
 
@@ -244,6 +249,7 @@ public class DashboardController implements Initializable {
             alert.setHeaderText("Informe esse erro ao desenvolvedor");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
+            e.printStackTrace();
         }
     }
 
@@ -272,6 +278,7 @@ public class DashboardController implements Initializable {
             alert.setHeaderText("Informe esse erro ao desenvolvedor");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
+            e.printStackTrace();
         }
     }
 
@@ -300,6 +307,7 @@ public class DashboardController implements Initializable {
             alert.setHeaderText("Informe esse erro ao desenvolvedor");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
+            e.printStackTrace();
         }
     }
 
@@ -364,6 +372,7 @@ public class DashboardController implements Initializable {
             alert.setHeaderText(null);
             alert.setContentText("Preço ou quantidade possuem formato inválido.");
             alert.showAndWait();
+            nfe.printStackTrace();
         } catch (SQLException e) {
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Mensagem de erro");
@@ -374,6 +383,7 @@ public class DashboardController implements Initializable {
                 alert.setContentText("Falha ao inserir produto: " + e.getMessage());
             }
             alert.showAndWait();
+            e.printStackTrace();
         }
     }
 
@@ -450,12 +460,14 @@ public class DashboardController implements Initializable {
             alert.setHeaderText(null);
             alert.setContentText("Preço ou quantidade possuem formato inválido.");
             alert.showAndWait();
+            nfe.printStackTrace();
         } catch (SQLException e) {
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Mensagem de erro");
             alert.setHeaderText("Informe esse erro ao desenvolvedor");
             alert.setContentText("Falha ao atualizar produto: " + e.getMessage());
             alert.showAndWait();
+            e.printStackTrace();
         }
     }
 
@@ -519,6 +531,7 @@ public class DashboardController implements Initializable {
             alert.setHeaderText("Informe esse erro ao desenvolvedor");
             alert.setContentText("Falha ao deletar o produto: " + e.getMessage());
             alert.showAndWait();
+            e.printStackTrace();
         }
     }
 
@@ -578,6 +591,7 @@ public class DashboardController implements Initializable {
             alert.setHeaderText(null);
             alert.setContentText("Informe essa mensagem ao desenvolvedor: " + e.getMessage());
             alert.showAndWait();
+            e.printStackTrace();
         }
         return productList;
     }
@@ -683,6 +697,7 @@ public class DashboardController implements Initializable {
             alert.setContentText(e.getMessage());
             alert.setHeaderText("Informe esse erro ao desenvolvedor");
             alert.showAndWait();
+            e.printStackTrace();
         }
 
     }
@@ -709,6 +724,7 @@ public class DashboardController implements Initializable {
             alert.setHeaderText("Informe esse erro ao desenvolvedor");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
+            e.printStackTrace();
         }
     }
 
@@ -770,6 +786,7 @@ public class DashboardController implements Initializable {
             alert.setHeaderText("Informe esse erro ao desenvolvedor");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
+            e.printStackTrace();
         }
     }
 
@@ -795,6 +812,7 @@ public class DashboardController implements Initializable {
             alert.setHeaderText("Informe esse erro ao desenvolvedor");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
+            e.printStackTrace();
         }
     }
 
@@ -857,6 +875,7 @@ public class DashboardController implements Initializable {
             alert.setHeaderText("Informe esse erro ao desenvolvedor:");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
+            e.printStackTrace();
         }
     }
 
@@ -930,6 +949,7 @@ public class DashboardController implements Initializable {
             alert.setHeaderText("Informe esse erro ao desenvolvedor:");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
+            e.printStackTrace();
         }
     }
 
@@ -963,6 +983,7 @@ public class DashboardController implements Initializable {
             alert.setHeaderText("Informe esse erro ao desenvolvedor:");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
+            e.printStackTrace();
         }
         return listData;
     }
@@ -1018,7 +1039,37 @@ public class DashboardController implements Initializable {
                 alert.setHeaderText("Informe esse erro ao desenvolvedor:");
                 alert.setContentText(e.getMessage());
                 alert.showAndWait();
+                e.printStackTrace();
             }
+        }
+    }
+
+    public void ordersReadBarcode() {
+        String sql = "SELECT * FROM product WHERE barcode = '" + orders_barcode.getText() + "'";
+        connection = DatabaseManager.getConnection();
+
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                System.out.println(resultSet.getString("type"));
+                System.out.println(resultSet.getString("brand"));
+                System.out.println(resultSet.getString("name"));
+            } else {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Mensagem de erro");
+                alert.setHeaderText(null);
+                alert.setContentText("Nenhum produto encontrado com o código de barras: " + orders_barcode.getText());
+                alert.showAndWait();
+            }
+        } catch (Exception e) {
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Mensagem de erro");
+            alert.setHeaderText("Informe esse erro ao desenvolvedor:");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+            e.printStackTrace();
         }
     }
 
@@ -1107,6 +1158,7 @@ public class DashboardController implements Initializable {
             alert.setHeaderText("Informe esse erro ao desenvolvedor");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
+            e.printStackTrace();
         }
     }
 
