@@ -182,6 +182,19 @@
     -fx-border-width: 0;
 }
 
+.orders-clear-button {
+    -fx-background-color: #ffae00;
+    -fx-background-radius: 8px;
+    -fx-text-fill: #fff;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-font-family: Arial;
+}
+
+.orders-clear-button:hover {
+    -fx-background-color: #fcc03c;
+}
+
 .pay-button {
     -fx-background-color: #295b7c;
     -fx-background-radius: 8px;
@@ -209,7 +222,7 @@
 }
 
 .nfe-button {
-    -fx-background-color: #ffae00;
+    -fx-background-color: rgba(0,100,55);
     -fx-background-radius: 8px;
     -fx-text-fill: #fff;
     -fx-font-size: 14px;
@@ -218,5 +231,5 @@
 }
 
 .nfe-button:hover {
-    -fx-background-color: #fcc03c;
+    -fx-background-color: #00884c;
 }

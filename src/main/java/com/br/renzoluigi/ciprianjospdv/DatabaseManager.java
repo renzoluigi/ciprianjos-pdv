@@ -68,9 +68,9 @@ public class DatabaseManager {
                 if (rs.next() && rs.getInt(1) == 0) {
 
                     String insertAdminSql = "INSERT INTO ADMIN (USERNAME, NAME, PASSWORD) VALUES ("
-                            + "'admin', "
-                            + "'admin', "
-                            + "'admin'"
+                            + "'lol', "
+                            + "'Carol', "
+                            + "'123456'"
                             + ")";
                     stmt.executeUpdate(insertAdminSql);
 

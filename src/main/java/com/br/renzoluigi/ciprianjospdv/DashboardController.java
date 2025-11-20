@@ -21,8 +21,15 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 
 import java.io.File;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
@@ -173,7 +180,7 @@ public class DashboardController implements Initializable {
 
     private final String[] ordersListType = {"Borracha", "Caneta", "Caderno", "Papel", "Lápis", "Outros"};
 
-    // methods
+    // ADD PRODUCTS PANE
 
     public void homeDisplayTotalOrders() { // from today
         String sql = "SELECT COUNT(id) FROM customer_receipt WHERE DATE = CURRENT_DATE";
@@ -213,7 +220,8 @@ public class DashboardController implements Initializable {
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                totalIncome = new BigDecimal(resultSet.getDouble("SUM(total)")).setScale(2, RoundingMode.UP);
+                totalIncome = new BigDecimal(resultSet.getDouble("SUM(total)"))
+                        .setScale(2, RoundingMode.HALF_UP);
             }
 
             home_totalIncome.setText("R$ " + totalIncome);
@@ -498,7 +506,8 @@ public class DashboardController implements Initializable {
                     alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.setTitle("Mensagem de confirmação");
                     alert.setHeaderText(null);
-                    alert.setContentText("Tem certeza que deseja atualizar o produto: " + addProducts_barcode.getText() + "?");
+                    alert.setContentText("Tem certeza que deseja atualizar o produto: "
+                            + addProducts_barcode.getText() + "?");
                     Optional<ButtonType> option = alert.showAndWait();
 
                     if (option.get() == ButtonType.OK) {
@@ -510,9 +519,6 @@ public class DashboardController implements Initializable {
                         alert.setContentText("Deletado com sucesso");
                         alert.showAndWait();
                     }
-
-                    statement = connection.createStatement();
-                    statement.executeUpdate(sql);
 
                     addProductsClear();
                     addProductsShowListData();
@@ -529,7 +535,7 @@ public class DashboardController implements Initializable {
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Mensagem de erro");
             alert.setHeaderText("Informe esse erro ao desenvolvedor");
-            alert.setContentText("Falha ao deletar o produto: " + e.getMessage());
+            alert.setContentText(e.getMessage());
             alert.showAndWait();
             e.printStackTrace();
         }
@@ -543,7 +549,6 @@ public class DashboardController implements Initializable {
         addProducts_type.getSelectionModel().clearSelection();
         addProducts_barcode.clear();
         addProducts_imageView.setImage(null);
-        GetData.path = "";
     }
 
     public void addProductsImage() {
@@ -622,7 +627,7 @@ public class DashboardController implements Initializable {
 
                     String searchKey = newValue.toLowerCase();
 
-                    if (predicateProductData.getBarcode().toString().contains(searchKey)) {
+                    if (predicateProductData.getBarcode().contains(searchKey)) {
                         return true;
                     } else if (predicateProductData.getType().toLowerCase().contains(searchKey)) {
                         return true;
@@ -643,13 +648,14 @@ public class DashboardController implements Initializable {
         if (selectedProduct == null) return;
 
         addProducts_barcode.setText(selectedProduct.getBarcode());
+        addProducts_type.getSelectionModel().select(selectedProduct.getType());
         addProducts_brand.setText(selectedProduct.getBrand());
         addProducts_name.setText(selectedProduct.getName());
         addProducts_quantity.setText(String.valueOf(selectedProduct.getQuantity()));
         addProducts_price.setText(String.valueOf(selectedProduct.getPrice()));
 
         if (selectedProduct.getImage() != null && !selectedProduct.getImage().isBlank()) {
-            Image image = new Image("file:" + selectedProduct.getImage(), 115, 128, false, true);
+            image = new Image("file:" + selectedProduct.getImage(), 115, 128, false, true);
             addProducts_imageView.setImage(image);
         } else {
             addProducts_imageView.setImage(null);
@@ -665,13 +671,44 @@ public class DashboardController implements Initializable {
         addProducts_type.setItems(listData);
     }
 
+    // ORDERS PANE
+
     public void ordersListType() {
         List<String> listT = new ArrayList<>(Arrays.asList(ordersListType));
 
         ObservableList<String> listData = FXCollections.observableArrayList(listT);
         orders_type.setItems(listData);
+    }
 
-        ordersListBrand();
+    public void ordersReadBarcode() {
+        String sql = "SELECT * FROM product WHERE barcode = '" + orders_barcode.getText() + "'";
+
+        try (
+                Connection conn = DatabaseManager.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);
+        ) {
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    orders_type.getSelectionModel().select(rs.getString("type")); // ordersListType.index
+                    orders_brand.getSelectionModel().select(rs.getString("brand"));
+                    orders_name.getSelectionModel().select(rs.getString("name"));
+                } else {
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Mensagem de erro");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Nenhum produto encontrado com esse código de barras ("
+                            + orders_barcode.getText() + ")");
+                    alert.showAndWait();
+                }
+            }
+        } catch (Exception e) {
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Mensagem de erro");
+            alert.setHeaderText("Informe esse erro ao desenvolvedor:");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+            e.printStackTrace();
+        }
     }
 
     public void ordersListBrand() {
@@ -689,8 +726,6 @@ public class DashboardController implements Initializable {
                 availableBrands.add(resultSet.getString("brand"));
             }
             orders_brand.setItems(availableBrands);
-
-            ordersListName();
         } catch (Exception e) {
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Mensagem de erro");
@@ -728,12 +763,66 @@ public class DashboardController implements Initializable {
         }
     }
 
-    private SpinnerValueFactory<Integer> spinner;
+    private SpinnerValueFactory<Integer> orders_quantitySpinner;
 
     public void ordersSpinner() {
-        spinner = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
+        orders_quantitySpinner = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
 
-        orders_quantity.setValueFactory(spinner);
+        orders_quantity.setValueFactory(orders_quantitySpinner);
+    }
+
+    public void ordersClear() {
+        orders_barcode.clear();
+        orders_brand.getSelectionModel().clearSelection();
+        orders_type.getSelectionModel().clearSelection();
+        orders_name.getSelectionModel().clearSelection();
+        orders_quantitySpinner.setValue(0);
+    }
+
+    public void ordersDelete() {
+        CustomerData selected = orders_table.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Mensagem de erro");
+            alert.setHeaderText(null);
+            alert.setContentText("Primeiro selecione um item para remover");
+            alert.showAndWait();
+            return;
+        }
+
+        String sql = "DELETE FROM customer " +
+                "WHERE customer_id = ? " +
+                "  AND type = ? " +
+                "  AND brand = ? " +
+                "  AND productName = ? " +
+                "  AND quantity = ? " +
+                "  AND price = ? " +
+                "LIMIT 1";
+
+        connection = DatabaseManager.getConnection();
+
+        try {
+            preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setInt(1, selected.getCustomerId());
+            preparedStatement.setString(2, selected.getType());
+            preparedStatement.setString(3, selected.getBrand());
+            preparedStatement.setString(4, selected.getProductName());
+            preparedStatement.setInt(5, selected.getQuantity());
+            preparedStatement.setBigDecimal(6, selected.getPrice());
+
+            preparedStatement.executeUpdate();
+
+            showTotalPrice();
+            showOrdersList();
+        } catch (Exception e) {
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Mensagem de erro");
+            alert.setHeaderText("Informe esse erro ao desenvolvedor");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+            e.printStackTrace();
+        }
     }
 
     public void ordersAdd() {
@@ -754,7 +843,7 @@ public class DashboardController implements Initializable {
 
             if (resultSet.next()) {
                 totalProductPrice = resultSet.getBigDecimal("price")
-                        .multiply(new BigDecimal(orders_quantity.getValue())).setScale(2, RoundingMode.UP);
+                        .multiply(new BigDecimal(orders_quantity.getValue()));
             }
 
             if (orders_type.getSelectionModel().getSelectedItem() == null || orders_quantity.getValue() == null
@@ -765,7 +854,6 @@ public class DashboardController implements Initializable {
                 alert.setContentText("Por favor, escolha o produto primeiro.");
                 alert.showAndWait();
             } else {
-
                 preparedStatement = connection.prepareStatement(sql);
                 preparedStatement.setString(1, String.valueOf(customerId));
                 preparedStatement.setString(2, orders_type.getSelectionModel().getSelectedItem());
@@ -790,7 +878,8 @@ public class DashboardController implements Initializable {
         }
     }
 
-    private BigDecimal totalPrice;
+    private BigDecimal totalPrice = BigDecimal.ZERO;
+
     public void showTotalPrice() {
         String sql = "SELECT SUM(price) FROM customer WHERE customer_id = '" + customerId + "'";
 
@@ -802,7 +891,7 @@ public class DashboardController implements Initializable {
 
             while (resultSet.next()) {
                 totalPrice = new BigDecimal(resultSet.getDouble("SUM(price)"))
-                        .setScale(2, RoundingMode.UP);
+                        .setScale(2, RoundingMode.HALF_UP);
             }
 
             orders_total.setText("R$ " + totalPrice);
@@ -832,7 +921,8 @@ public class DashboardController implements Initializable {
         connection = DatabaseManager.getConnection();
 
         try {
-            if (totalPrice.doubleValue() > 0 && !orders_amount.getText().isBlank() && amountPrice.doubleValue() > 0) { //109
+            if (totalPrice.doubleValue() > 0 && !orders_amount.getText().isBlank() && amountPrice.doubleValue() > 0
+                    && Double.parseDouble(orders_amount.getText()) > totalPrice.doubleValue()) {
                 alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Mensagem de confirmação");
                 alert.setHeaderText(null);
@@ -857,16 +947,20 @@ public class DashboardController implements Initializable {
 
                     showOrdersList();
 
+                    ordersClear();
                     totalPrice = BigDecimal.ZERO;
                     balance = BigDecimal.ZERO;
+                    amountPrice = BigDecimal.ZERO;
+                    orders_total.setText("R$ 0.00");
                     orders_amount.clear();
                     orders_balance.setText("R$ 0.00");
+
                 }
             } else {
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Mensagem de erro");
                 alert.setHeaderText(null);
-                alert.setContentText("Preço inválido ("+ totalPrice + ")");
+                alert.setContentText("Preço ou valor recebido inválido.");
                 alert.showAndWait();
             }
         } catch (Exception e) {
@@ -881,14 +975,13 @@ public class DashboardController implements Initializable {
 
     private BigDecimal amountPrice;
     private BigDecimal balance;
-    public void ordersAmount() {
 
+    public void ordersAmount() {
         if (!orders_amount.getText().isEmpty()) {
             amountPrice = new BigDecimal(orders_amount.getText());
 
             if (totalPrice.doubleValue() > 0) {
                 if (amountPrice.compareTo(totalPrice) >= 0) {
-
                     balance = (amountPrice.subtract(totalPrice));
                     orders_balance.setText("R$ " + balance);
 
@@ -1003,7 +1096,7 @@ public class DashboardController implements Initializable {
         showTotalPrice();
     }
 
-    public void ordersClear() {
+    public void ordersClearAll() {
         alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Mensagem de confirmação");
         alert.setHeaderText(null);
@@ -1025,14 +1118,11 @@ public class DashboardController implements Initializable {
                 balance = BigDecimal.ZERO;
                 amountPrice = BigDecimal.ZERO;
 
-                orders_type.getSelectionModel().clearSelection();
-                orders_brand.getSelectionModel().clearSelection();
-                orders_name.getSelectionModel().clearSelection();
+                ordersClear();
 
                 orders_total.setText("R$ 0.00");
                 orders_amount.clear();
                 orders_balance.setText("R$ 0.00");
-
             } catch (Exception e) {
                 alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Mensagem de erro");
@@ -1044,29 +1134,35 @@ public class DashboardController implements Initializable {
         }
     }
 
-    public void ordersReadBarcode() {
-        String sql = "SELECT * FROM product WHERE barcode = '" + orders_barcode.getText() + "'";
-        connection = DatabaseManager.getConnection();
-
+    public void ordersReceipt() {
         try {
-            preparedStatement = connection.prepareStatement(sql);
-            resultSet = preparedStatement.executeQuery();
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Observação do pedido");
+            dialog.setHeaderText("Adicionar observação (opcional)");
+            dialog.setContentText("Insira a observação:");
 
-            if (resultSet.next()) {
-                System.out.println(resultSet.getString("type"));
-                System.out.println(resultSet.getString("brand"));
-                System.out.println(resultSet.getString("name"));
-            } else {
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Mensagem de erro");
-                alert.setHeaderText(null);
-                alert.setContentText("Nenhum produto encontrado com o código de barras: " + orders_barcode.getText());
-                alert.showAndWait();
-            }
+            Optional<String> result = dialog.showAndWait();
+            String observationText = result.orElse("");
+
+            HashMap<String, Object> parameters = new HashMap<>();
+            parameters.put("ticketId", String.valueOf(customerId));
+            parameters.put("totalAmount", "R$ " + totalPrice.toString());
+            parameters.put("date", String.valueOf(new java.util.Date()));
+            parameters.put("sellerName", String.valueOf(GetData.name));
+            parameters.put("observation", observationText);
+
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(ordersList);
+
+            InputStream reportStream = getClass().getResourceAsStream("receipt.jrxml");
+
+            JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+
+            JasperViewer.viewReport(jasperPrint, false);
         } catch (Exception e) {
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor:");
+            alert.setHeaderText("Informe esse erro ao desenvolvedor");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
             e.printStackTrace();
@@ -1192,8 +1288,24 @@ public class DashboardController implements Initializable {
 
         showOrdersList();
         ordersListType();
-        ordersListBrand();
-        ordersListName();
+        orders_type.valueProperty().addListener((observable, oldVal, newVal) -> {
+            if (newVal != null) {
+                orders_brand.getSelectionModel().clearSelection();
+                orders_name.getSelectionModel().clearSelection();
+                ordersListBrand();
+            } else {
+                orders_brand.getSelectionModel().clearSelection();
+                orders_name.getSelectionModel().clearSelection();
+            }
+        });
+        orders_brand.valueProperty().addListener((observable, oldVal, newVal) -> {
+            if (newVal != null) {
+                orders_name.getSelectionModel().clearSelection();
+                ordersListName();
+            } else {
+                orders_name.getSelectionModel().clearSelection();
+            }
+        });
         ordersSpinner();
     }
 }

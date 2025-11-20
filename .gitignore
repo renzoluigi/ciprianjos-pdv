@@ -3,6 +3,10 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .kotlin
+file/data
+*.old
+*.trace.db
+output/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

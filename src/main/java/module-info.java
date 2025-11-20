@@ -9,6 +9,7 @@ module com.br.renzoluigi.ciprianjospdv {
     requires org.kordamp.ikonli.javafx;
     requires java.sql;
     requires com.h2database;
+    requires jasperreports;
 
     opens com.br.renzoluigi.ciprianjospdv to javafx.fxml;
     exports com.br.renzoluigi.ciprianjospdv;

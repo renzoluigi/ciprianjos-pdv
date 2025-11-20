@@ -24,7 +24,7 @@ public class LoginController {
     @FXML
     private TextField username;
     @FXML
-    private PasswordField password; //password field
+    private PasswordField password;
     @FXML
     private Button loginButton;
     @FXML
@@ -39,7 +39,7 @@ public class LoginController {
     private ResultSet resultSet;
 
     public void login() {
-        String sql = "SELECT * FROM admin WHERE username = ?  and  password = ?";
+        String sql = "SELECT * FROM admin WHERE LOWER(username) = LOWER(?)  and  password = ?";
         connection = DatabaseManager.getConnection();
         Alert alert;
         try {
@@ -49,7 +49,7 @@ public class LoginController {
             resultSet = preparedStatement.executeQuery();
             if (username.getText().isBlank() || password.getText().isBlank()) {
                 alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Mensagem de Erro");
+                alert.setTitle("Mensagem de erro");
                 alert.setHeaderText(null);
                 alert.setContentText("Por favor, preencha todos os campos.");
                 alert.showAndWait();

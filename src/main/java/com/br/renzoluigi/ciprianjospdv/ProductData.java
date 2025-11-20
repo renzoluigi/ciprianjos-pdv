@@ -9,6 +9,7 @@ public class ProductData {
     private String brand;
     private String name;
     private BigDecimal price;
+
     private Integer quantity;
     private Date registerDate;
     private String image;
