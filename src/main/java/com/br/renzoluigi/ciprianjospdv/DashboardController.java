@@ -35,6 +35,7 @@ import java.math.RoundingMode;
 import java.net.URL;
 import java.sql.*;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class DashboardController implements Initializable {
@@ -1186,7 +1187,10 @@ public class DashboardController implements Initializable {
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("ticketId", String.valueOf(customerId));
             parameters.put("totalAmount", FormatPrice.bigDecimalToString(totalPrice));
-            parameters.put("date", String.valueOf(new java.util.Date())); // FORMATACAO
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            parameters.put("date", String.valueOf(sdf.format(new java.util.Date(System.currentTimeMillis()))));
+
             parameters.put("sellerName", String.valueOf(GetData.name));
             parameters.put("discount", FormatPrice.bigDecimalToString(discount));
             parameters.put("observation", observationText);
