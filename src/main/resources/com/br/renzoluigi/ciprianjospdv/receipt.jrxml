@@ -27,6 +27,7 @@
     <parameter name="totalAmount" class="java.lang.String"/>
     <parameter name="date" class="java.lang.String"/>
     <parameter name="sellerName" class="java.lang.String"/>
+    <parameter name="discount" class="java.lang.String"/>
     <parameter name="observation" class="java.lang.String"/>
 
     <queryString><![CDATA[]]></queryString>
@@ -185,7 +186,7 @@
                 <textElement textAlignment="Right">
                     <font fontName="Consolas" size="9"/>
                 </textElement>
-                <textFieldExpression><![CDATA["R$ 0,00"]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$P{discount}]]></textFieldExpression>
             </textField>
 
             <textField>

@@ -233,3 +233,16 @@
 .nfe-button:hover {
     -fx-background-color: #00884c;
 }
+
+.discount-button {
+    -fx-background-color: rgb(75, 75, 75);
+    -fx-background-radius: 8px;
+    -fx-text-fill: #fff;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-font-family: Arial;
+}
+
+.discount-button:hover {
+    -fx-background-color: rgb(103, 103, 103);
+}

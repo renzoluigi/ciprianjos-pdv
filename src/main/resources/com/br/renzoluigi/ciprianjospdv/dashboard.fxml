@@ -119,7 +119,7 @@
                <center>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <children>
-                        <AnchorPane fx:id="home_pane" disable="true" prefHeight="550.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="home_pane" prefHeight="550.0" prefWidth="900.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="13.0" layoutY="14.0" prefHeight="146.0" prefWidth="874.0">
                                  <styleClass>
@@ -318,7 +318,7 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="orders_pane" prefHeight="548.0" prefWidth="900.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="orders_pane" prefHeight="548.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="520.0" prefWidth="525.0">
                                  <styleClass>
@@ -373,7 +373,7 @@
                                           <Font size="18.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="orders_total" layoutX="149.0" layoutY="262.0" prefHeight="21.0" prefWidth="149.0" text="R$ 0.00">
+                                    <Label fx:id="orders_total" layoutX="149.0" layoutY="262.0" prefHeight="21.0" prefWidth="149.0" text="R$ 0,00">
                                        <font>
                                           <Font name="Arial" size="18.0" />
                                        </font>
@@ -389,7 +389,7 @@
                                           <Font size="18.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="orders_balance" layoutX="149.0" layoutY="337.0" prefHeight="21.0" prefWidth="149.0" text="R$ 0.00">
+                                    <Label fx:id="orders_balance" layoutX="149.0" layoutY="337.0" prefHeight="21.0" prefWidth="149.0" text="R$ 0,00">
                                        <font>
                                           <Font name="Arial" size="18.0" />
                                        </font>
@@ -399,9 +399,10 @@
                                     <Button fx:id="orders_nfeButton" layoutX="202.0" layoutY="460.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="90.0" styleClass="nfe-button" text="Gerar NFE" />
                                     <Button fx:id="orders_clearAllButton" layoutX="38.0" layoutY="460.0" mnemonicParsing="false" onAction="#ordersClearAll" prefHeight="40.0" prefWidth="90.0" styleClass="clear-button" text="Limpar" />
                                     <Line endX="157.0" layoutX="169.0" layoutY="375.0" startX="-165.0" stroke="#00a3ff" />
-                                    <Button fx:id="orders_addButton" layoutX="202.0" layoutY="214.0" mnemonicParsing="false" onAction="#ordersAdd" prefHeight="40.0" prefWidth="90.0" styleClass="add-button" text="Adicionar" />
+                                    <Button fx:id="orders_addButton" layoutX="225.0" layoutY="214.0" mnemonicParsing="false" onAction="#ordersAdd" prefHeight="40.0" prefWidth="90.0" styleClass="add-button" text="Adicionar" />
                                     <TextField fx:id="orders_barcode" alignment="CENTER" layoutX="8.0" layoutY="24.0" onAction="#ordersReadBarcode" prefHeight="27.0" prefWidth="315.0" promptText="Digite o código de barras" styleClass="textfield" />
-                                    <Button fx:id="orders_clearButton1" layoutX="38.0" layoutY="214.0" mnemonicParsing="false" onAction="#ordersClear" prefHeight="40.0" prefWidth="90.0" styleClass="orders-clear-button" text="Limpar" />
+                                    <Button fx:id="orders_clearButton1" layoutX="14.0" layoutY="214.0" mnemonicParsing="false" onAction="#ordersClear" prefHeight="40.0" prefWidth="90.0" styleClass="orders-clear-button" text="Limpar" />
+                                    <Button fx:id="orders_discountButton" layoutX="120.0" layoutY="214.0" mnemonicParsing="false" onAction="#ordersDiscount" prefHeight="40.0" prefWidth="90.0" styleClass="discount-button" stylesheets="@dashboard.css" text="Desconto" />
                                  </children>
                               </AnchorPane>
                            </children></AnchorPane>
