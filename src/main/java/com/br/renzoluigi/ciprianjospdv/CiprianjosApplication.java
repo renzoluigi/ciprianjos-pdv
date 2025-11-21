@@ -1,5 +1,7 @@
 package com.br.renzoluigi.ciprianjospdv;
 
+import com.br.renzoluigi.ciprianjospdv.db.DatabaseManager;
+import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -9,7 +11,7 @@ import javafx.stage.StageStyle;
 import java.io.IOException;
 import java.util.Objects;
 
-public class Application extends javafx.application.Application {
+public class CiprianjosApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {

@@ -1,5 +1,10 @@
 package com.br.renzoluigi.ciprianjospdv;
 
+import com.br.renzoluigi.ciprianjospdv.dto.CustomerData;
+import com.br.renzoluigi.ciprianjospdv.db.DatabaseManager;
+import com.br.renzoluigi.ciprianjospdv.dto.ProductData;
+import com.br.renzoluigi.ciprianjospdv.util.FormatPrice;
+import com.br.renzoluigi.ciprianjospdv.util.GetData;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -787,18 +792,19 @@ public class DashboardController implements Initializable {
 
     public void ordersDiscount() {
         TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Observação do pedido");
-        dialog.setHeaderText("Adicionar observação (opcional)");
+        dialog.setTitle("Aplicar desconto");
+        dialog.setHeaderText(null);
         dialog.setContentText("Insira o desconto:");
 
         Optional<String> result = dialog.showAndWait();
+
         String discountText = result.orElse("");
         try {
             if (discountText.isBlank()) {
                 return;
             }
 
-            discount = FormatPrice.stringToBigDecimal(discountText);
+            discount = FormatPrice.stringToBigDecimal(discountText).setScale(2, RoundingMode.HALF_UP);
             showTotalPrice();
         } catch (NumberFormatException nfe) {
             alert = new Alert(Alert.AlertType.ERROR);
@@ -1182,27 +1188,30 @@ public class DashboardController implements Initializable {
             dialog.setContentText("Insira a observação:");
 
             Optional<String> result = dialog.showAndWait();
-            String observationText = result.orElse("");
+            if (result.isPresent()) {
+                String observationText = result.orElse("");
 
-            HashMap<String, Object> parameters = new HashMap<>();
-            parameters.put("ticketId", String.valueOf(customerId));
-            parameters.put("totalAmount", FormatPrice.bigDecimalToString(totalPrice));
+                HashMap<String, Object> parameters = new HashMap<>();
+                parameters.put("ticketId", String.valueOf(customerId));
+                parameters.put("subtotal", FormatPrice.bigDecimalToString(totalPrice.add(discount)));
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-            parameters.put("date", String.valueOf(sdf.format(new java.util.Date(System.currentTimeMillis()))));
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                parameters.put("date", String.valueOf(sdf.format(new java.util.Date(System.currentTimeMillis()))));
 
-            parameters.put("sellerName", String.valueOf(GetData.name));
-            parameters.put("discount", FormatPrice.bigDecimalToString(discount));
-            parameters.put("observation", observationText);
+                parameters.put("sellerName", String.valueOf(GetData.name));
+                parameters.put("discount", FormatPrice.bigDecimalToString(discount));
+                parameters.put("totalPrice", FormatPrice.bigDecimalToString(totalPrice));
+                parameters.put("observation", observationText);
 
-            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(ordersList);
+                JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(ordersList);
 
-            InputStream reportStream = getClass().getResourceAsStream("receipt.jrxml");
+                InputStream reportStream = getClass().getResourceAsStream("receipt.jrxml");
 
-            JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+                JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
+                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
-            JasperViewer.viewReport(jasperPrint, false);
+                JasperViewer.viewReport(jasperPrint, false);
+            }
         } catch (Exception e) {
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Mensagem de erro");

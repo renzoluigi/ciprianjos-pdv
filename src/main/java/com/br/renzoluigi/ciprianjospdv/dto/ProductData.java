@@ -1,4 +1,4 @@
-package com.br.renzoluigi.ciprianjospdv;
+package com.br.renzoluigi.ciprianjospdv.dto;
 
 import java.math.BigDecimal;
 import java.util.Date;

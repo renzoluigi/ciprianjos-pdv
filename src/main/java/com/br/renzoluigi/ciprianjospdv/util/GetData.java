@@ -1,4 +1,4 @@
-package com.br.renzoluigi.ciprianjospdv;
+package com.br.renzoluigi.ciprianjospdv.util;
 
 public class GetData {
     public static String name;

@@ -24,10 +24,11 @@
     <property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 
     <parameter name="ticketId" class="java.lang.String"/>
-    <parameter name="totalAmount" class="java.lang.String"/>
+    <parameter name="subtotal" class="java.lang.String"/>
     <parameter name="date" class="java.lang.String"/>
     <parameter name="sellerName" class="java.lang.String"/>
     <parameter name="discount" class="java.lang.String"/>
+    <parameter name="totalPrice" class="java.lang.String"/>
     <parameter name="observation" class="java.lang.String"/>
 
     <queryString><![CDATA[]]></queryString>
@@ -171,7 +172,7 @@
                 <textElement textAlignment="Right">
                     <font fontName="Consolas" size="9" isBold="true"/>
                 </textElement>
-                <textFieldExpression><![CDATA[$P{totalAmount}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$P{subtotal}]]></textFieldExpression>
             </textField>
 
             <textField>
@@ -201,7 +202,7 @@
                 <textElement textAlignment="Right">
                     <font fontName="Consolas" size="10" isBold="true"/>
                 </textElement>
-                <textFieldExpression><![CDATA[$P{totalAmount}]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$P{totalPrice}]]></textFieldExpression>
             </textField>
             <line>
                 <reportElement x="0" y="60" width="216" height="1" uuid="550e8400-e29b-41d4-a716-446655440004"/>

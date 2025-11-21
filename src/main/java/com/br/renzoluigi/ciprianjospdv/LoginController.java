@@ -1,5 +1,7 @@
 package com.br.renzoluigi.ciprianjospdv;
 
+import com.br.renzoluigi.ciprianjospdv.db.DatabaseManager;
+import com.br.renzoluigi.ciprianjospdv.util.GetData;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

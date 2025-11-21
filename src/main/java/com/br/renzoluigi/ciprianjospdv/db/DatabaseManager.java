@@ -1,4 +1,4 @@
-package com.br.renzoluigi.ciprianjospdv;
+package com.br.renzoluigi.ciprianjospdv.db;
 
 import org.h2.tools.Server;
 
