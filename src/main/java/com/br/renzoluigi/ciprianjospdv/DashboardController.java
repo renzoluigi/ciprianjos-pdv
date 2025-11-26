@@ -271,7 +271,6 @@ public class DashboardController implements Initializable {
         home_incomeChart.getData().clear();
 
         String sql = "SELECT date, SUM(total) FROM customer_receipt GROUP BY date ORDER BY date";
-
         connection = DatabaseManager.getConnection();
 
         try {
@@ -343,42 +342,43 @@ public class DashboardController implements Initializable {
                 alert.setHeaderText(null);
                 alert.setContentText("Por favor, preencha todos os campos.");
                 alert.showAndWait();
+                return;
+            }
+
+            String checkData = "SELECT barcode FROM product WHERE barcode = '" +
+                    addProducts_barcode.getText() + "'";
+
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(checkData);
+
+            if (resultSet.next()) {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setHeaderText(null);
+                alert.setTitle("Mensagem de erro");
+                alert.setContentText("Já existe um produto com o código de barras: " + addProducts_barcode.getText());
+                alert.showAndWait();
             } else {
-                String checkData = "SELECT barcode FROM product WHERE barcode = '" +
-                        addProducts_barcode.getText() + "'";
+                BigDecimal price = FormatPrice.stringToBigDecimal(addProducts_price.getText());
+                int quantity = Integer.parseInt(addProducts_quantity.getText().trim());
 
-                statement = connection.createStatement();
-                resultSet = statement.executeQuery(checkData);
-
-                if (resultSet.next()) {
-                    alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setHeaderText(null);
-                    alert.setTitle("Mensagem de erro");
-                    alert.setContentText("Já existe um produto com o código de barras: " + addProducts_barcode.getText());
-                    alert.showAndWait();
+                preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, addProducts_barcode.getText().trim());
+                preparedStatement.setString(2, addProducts_type.getSelectionModel().getSelectedItem());
+                preparedStatement.setString(3, addProducts_brand.getText().trim());
+                preparedStatement.setString(4, addProducts_name.getText().trim());
+                preparedStatement.setBigDecimal(5, price);
+                preparedStatement.setInt(6, quantity);
+                if (GetData.path == null) {
+                    preparedStatement.setString(7, null);
                 } else {
-                    BigDecimal price = FormatPrice.stringToBigDecimal(addProducts_price.getText());
-                    int quantity = Integer.parseInt(addProducts_quantity.getText().trim());
-
-                    preparedStatement = connection.prepareStatement(sql);
-                    preparedStatement.setString(1, addProducts_barcode.getText().trim());
-                    preparedStatement.setString(2, addProducts_type.getSelectionModel().getSelectedItem());
-                    preparedStatement.setString(3, addProducts_brand.getText().trim());
-                    preparedStatement.setString(4, addProducts_name.getText().trim());
-                    preparedStatement.setBigDecimal(5, price);
-                    preparedStatement.setInt(6, quantity);
-                    if (GetData.path == null) {
-                        preparedStatement.setString(7, null);
-                    } else {
-                        preparedStatement.setString(7, GetData.path.replace("\\", "\\\\"));
-                    }
-                    preparedStatement.setDate(8, new Date(System.currentTimeMillis()));
-
-                    preparedStatement.executeUpdate();
-
-                    addProductsShowListData();
-                    addProductsClear();
+                    preparedStatement.setString(7, GetData.path.replace("\\", "\\\\"));
                 }
+                preparedStatement.setDate(8, new Date(System.currentTimeMillis()));
+
+                preparedStatement.executeUpdate();
+
+                addProductsShowListData();
+                addProductsClear();
             }
         } catch (NumberFormatException nfe) {
             alert = new Alert(Alert.AlertType.ERROR);
@@ -420,55 +420,56 @@ public class DashboardController implements Initializable {
                 alert.setHeaderText(null);
                 alert.setContentText("Por favor, preencha todos os campos.");
                 alert.showAndWait();
-            } else {
-                String checkData = "SELECT barcode FROM product WHERE barcode = '"
-                        + addProducts_barcode.getText() + "'";
-                statement = connection.createStatement();
-                resultSet = statement.executeQuery(checkData);
+                return;
+            }
 
-                if (resultSet.next()) {
-                    BigDecimal price = new BigDecimal(addProducts_price.getText().trim());
-                    int quantity = Integer.parseInt(addProducts_quantity.getText().trim());
+            String checkData = "SELECT barcode FROM product WHERE barcode = '"
+                    + addProducts_barcode.getText() + "'";
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(checkData);
 
-                    alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Mensagem de confirmação");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Tem certeza que deseja atualizar o produto: " + addProducts_barcode.getText() + "?");
+            if (resultSet.next()) {
+                BigDecimal price = FormatPrice.stringToBigDecimal(addProducts_price.getText());
+                int quantity = Integer.parseInt(addProducts_quantity.getText().trim());
 
-                    Optional<ButtonType> option = alert.showAndWait();
-                    if (option.isEmpty() || option.get() != ButtonType.OK) return;
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Mensagem de confirmação");
+                alert.setHeaderText(null);
+                alert.setContentText("Tem certeza que deseja atualizar o produto: " + addProducts_barcode.getText() + "?");
 
-                    preparedStatement = connection.prepareStatement(sql);
-                    preparedStatement.setString(1, addProducts_type.getSelectionModel().getSelectedItem());
-                    preparedStatement.setString(2, addProducts_brand.getText().trim());
-                    preparedStatement.setString(3, addProducts_name.getText().trim());
-                    preparedStatement.setBigDecimal(4, price);
-                    preparedStatement.setInt(5, quantity);
-                    if (uri == null) {
-                        preparedStatement.setNull(6, Types.VARCHAR);
-                    } else {
-                        preparedStatement.setString(6, uri);
-                    }
-                    preparedStatement.setString(7, addProducts_barcode.getText().trim());
+                Optional<ButtonType> option = alert.showAndWait();
+                if (option.isEmpty() || option.get() != ButtonType.OK) return;
 
-                    preparedStatement.executeUpdate();
-
-                    alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Mensagem de informação");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Atualizado com sucesso");
-                    alert.showAndWait();
-
-                    addProductsShowListData();
-                    addProductsClear();
+                preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, addProducts_type.getSelectionModel().getSelectedItem());
+                preparedStatement.setString(2, addProducts_brand.getText().trim());
+                preparedStatement.setString(3, addProducts_name.getText().trim());
+                preparedStatement.setBigDecimal(4, price);
+                preparedStatement.setInt(5, quantity);
+                if (uri == null) {
+                    preparedStatement.setNull(6, Types.VARCHAR);
                 } else {
-                    alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Mensagem de erro");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Produto com o código de barras: "
-                            + addProducts_barcode.getText() + "não encontrado.");
-                    alert.showAndWait();
+                    preparedStatement.setString(6, uri);
                 }
+                preparedStatement.setString(7, addProducts_barcode.getText().trim());
+
+                preparedStatement.executeUpdate();
+
+                alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Mensagem de informação");
+                alert.setHeaderText(null);
+                alert.setContentText("Atualizado com sucesso");
+                alert.showAndWait();
+
+                addProductsShowListData();
+                addProductsClear();
+            } else {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Mensagem de erro");
+                alert.setHeaderText(null);
+                alert.setContentText("Produto com o código de barras: "
+                        + addProducts_barcode.getText() + "não encontrado.");
+                alert.showAndWait();
             }
         } catch (NumberFormatException nfe) {
             alert = new Alert(Alert.AlertType.ERROR);
@@ -504,41 +505,41 @@ public class DashboardController implements Initializable {
                 alert.setHeaderText(null);
                 alert.setContentText("Por favor, preencha todos os campos.");
                 alert.showAndWait();
-            } else {
-                String checkData = "SELECT barcode FROM product WHERE barcode = '" +
-                        addProducts_barcode.getText() + "'";
-                statement = connection.createStatement();
-                resultSet = statement.executeQuery(checkData);
+                return;
+            }
 
-                if (resultSet.next()) {
-                    alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Mensagem de confirmação");
+            String checkData = "SELECT barcode FROM product WHERE barcode = '" +
+                    addProducts_barcode.getText() + "'";
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(checkData);
+
+            if (resultSet.next()) {
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Mensagem de confirmação");
+                alert.setHeaderText(null);
+                alert.setContentText("Tem certeza que deseja deletar o produto: "
+                        + addProducts_barcode.getText() + "?");
+                Optional<ButtonType> option = alert.showAndWait();
+
+                if (option.get() == ButtonType.OK) {
+                    statement = connection.createStatement();
+                    statement.executeUpdate(sql);
+
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Mensagem de informação");
                     alert.setHeaderText(null);
-                    alert.setContentText("Tem certeza que deseja deletar o produto: "
-                            + addProducts_barcode.getText() + "?");
-                    Optional<ButtonType> option = alert.showAndWait();
-
-                    if (option.get() == ButtonType.OK) {
-                        statement = connection.createStatement();
-                        statement.executeUpdate(sql);
-
-                        alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Mensagem de informação");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Deletado com sucesso");
-                        alert.showAndWait();
-
-                        addProductsClear();
-                        addProductsShowListData();
-                    }
-                } else {
-                    alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Mensagem de erro");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Não existe um produto com o código de barras: " + addProducts_barcode.getText());
+                    alert.setContentText("Deletado com sucesso");
                     alert.showAndWait();
-                }
 
+                    addProductsClear();
+                    addProductsShowListData();
+                }
+            } else {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Mensagem de erro");
+                alert.setHeaderText(null);
+                alert.setContentText("Não existe um produto com o código de barras: " + addProducts_barcode.getText());
+                alert.showAndWait();
             }
         } catch (SQLException e) {
             alert = new Alert(Alert.AlertType.ERROR);
@@ -654,6 +655,7 @@ public class DashboardController implements Initializable {
 
     public void addProductsSelect() {
         ProductData selectedProduct = addProducts_table.getSelectionModel().getSelectedItem();
+
         if (selectedProduct == null) return;
 
         addProducts_barcode.setText(selectedProduct.getBarcode());
@@ -690,30 +692,93 @@ public class DashboardController implements Initializable {
     }
 
     public void ordersReadBarcode() {
-        String sql = "SELECT * FROM product WHERE barcode = '" + orders_barcode.getText() + "'";
+        if (orders_barcode.getText().isBlank()) return;
 
-        try (
-                Connection conn = DatabaseManager.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql);
-        ) {
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    orders_type.getSelectionModel().select(rs.getString("type")); // ordersListType.index
-                    orders_brand.getSelectionModel().select(rs.getString("brand"));
-                    orders_name.getSelectionModel().select(rs.getString("name"));
-                } else {
+        String sqlProduct = "SELECT * FROM product WHERE barcode = '" + orders_barcode.getText() + "'";
+
+        connection = DatabaseManager.getConnection();
+        try {
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(sqlProduct);
+            if (resultSet.next()) {
+                String productType = resultSet.getString("type");
+                String productBrand = resultSet.getString("brand");
+                String productName = resultSet.getString("name");
+                BigDecimal productPrice = resultSet.getBigDecimal("price"); // clear
+
+                setCustomerId();
+
+                String sqlCheck = "SELECT * FROM customer " +
+                        "WHERE customer_id = ? AND type = ? AND brand = ? AND productName = ?";
+                try {
+                    preparedStatement = connection.prepareStatement(sqlCheck);
+                    preparedStatement.setInt(1, customerId);
+                    preparedStatement.setString(2, productType);
+                    preparedStatement.setString(3, productBrand);
+                    preparedStatement.setString(4, productName);
+
+                    resultSet = preparedStatement.executeQuery();
+
+                    if (resultSet.next()) {
+                        int newQuantity = resultSet.getInt("quantity") + 1;
+                        BigDecimal newPrice = productPrice.multiply(new BigDecimal(newQuantity));
+
+                        String sqlUpdate = "UPDATE customer SET quantity = ?, price = ? " +
+                                "WHERE customer_id = ? AND type = ? AND brand = ? AND productName = ?";
+
+                        preparedStatement = connection.prepareStatement(sqlUpdate);
+                        preparedStatement.setInt(1, newQuantity);
+                        preparedStatement.setBigDecimal(2, newPrice);
+                        preparedStatement.setInt(3, customerId);
+                        preparedStatement.setString(4, productType);
+                        preparedStatement.setString(5, productBrand);
+                        preparedStatement.setString(6, productName);
+
+                        preparedStatement.executeUpdate();
+                    } else {
+                        String sqlInsert = "INSERT INTO customer (customer_id, type, brand, productName, quantity, price, date) " +
+                                "VALUES(?, ?, ?, ?, ?, ?, ?)";
+
+                        try {
+                            preparedStatement = connection.prepareStatement(sqlInsert);
+                            preparedStatement.setInt(1, customerId);
+                            preparedStatement.setString(2, productType);
+                            preparedStatement.setString(3, productBrand);
+                            preparedStatement.setString(4, productName);
+                            preparedStatement.setInt(5, 1);
+                            preparedStatement.setBigDecimal(6, productPrice);
+                            preparedStatement.setDate(7, new Date(System.currentTimeMillis()));
+                            preparedStatement.executeUpdate();
+                        } catch (Exception e) {
+                            alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Mensagem de erro");
+                            alert.setHeaderText("Informe esse erro ao desenvolvedor");
+                            alert.setContentText(e.getMessage());
+                            alert.showAndWait();
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (Exception e) {
                     alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Mensagem de erro");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Nenhum produto encontrado com esse código de barras ("
-                            + orders_barcode.getText() + ")");
+                    alert.setHeaderText("Informe esse erro ao desenvolvedor");
+                    alert.setContentText(e.getMessage());
                     alert.showAndWait();
+                    e.printStackTrace();
                 }
+
+                showOrdersList();
+            } else {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Mensagem de erro");
+                alert.setHeaderText(null);
+                alert.setContentText("Nenhum produto encontrado com esse código de barras (" + orders_barcode.getText() + ")");
+                alert.showAndWait();
             }
         } catch (Exception e) {
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor:");
+            alert.setHeaderText("Informe esse erro ao desenvolvedor");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
             e.printStackTrace();
@@ -738,8 +803,8 @@ public class DashboardController implements Initializable {
         } catch (Exception e) {
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Mensagem de erro");
-            alert.setContentText(e.getMessage());
             alert.setHeaderText("Informe esse erro ao desenvolvedor");
+            alert.setContentText(e.getMessage());
             alert.showAndWait();
             e.printStackTrace();
         }
@@ -938,9 +1003,10 @@ public class DashboardController implements Initializable {
                         .setScale(2, RoundingMode.HALF_UP);
             }
 
-            totalPrice = totalPrice.subtract(discount);
-
-            orders_total.setText(FormatPrice.bigDecimalToString(totalPrice));
+            if (totalPrice.compareTo(discount) >= 0) {
+                totalPrice = totalPrice.subtract(discount);
+                orders_total.setText(FormatPrice.bigDecimalToString(totalPrice));
+            }
         } catch (Exception e) {
             alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Mensagem de erro");
@@ -997,10 +1063,10 @@ public class DashboardController implements Initializable {
                     totalPrice = BigDecimal.ZERO;
                     balance = BigDecimal.ZERO;
                     amountPrice = BigDecimal.ZERO;
+                    discount = BigDecimal.ZERO;
                     orders_total.setText(FormatPrice.bigDecimalToString(BigDecimal.ZERO));
                     orders_amount.clear();
                     orders_balance.setText(FormatPrice.bigDecimalToString(BigDecimal.ZERO));
-
                 }
             } else {
                 alert = new Alert(Alert.AlertType.ERROR);

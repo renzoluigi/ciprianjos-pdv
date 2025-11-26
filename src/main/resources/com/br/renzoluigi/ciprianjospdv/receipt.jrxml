@@ -1,27 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
               name="Cupom80mm"
               pageWidth="226"
               pageHeight="842"
-              columnWidth="216"
-              leftMargin="5"
-              rightMargin="5"
-              topMargin="0"
-              bottomMargin="20"
+              columnWidth="206" leftMargin="10"  rightMargin="10" topMargin="0"
+              bottomMargin="5"
               isIgnorePagination="true"
               uuid="4c3609d7-21a3-4ed8-a9fd-2fa1c45ee105">
-
-    <property name="com.jaspersoft.studio.unit." value="pixel"/>
-    <property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
-    <property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
-    <property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
-    <property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
-    <property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
-    <property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
-    <property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
-    <property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 
     <parameter name="ticketId" class="java.lang.String"/>
     <parameter name="subtotal" class="java.lang.String"/>
@@ -31,204 +17,225 @@
     <parameter name="totalPrice" class="java.lang.String"/>
     <parameter name="observation" class="java.lang.String"/>
 
-    <queryString><![CDATA[]]></queryString>
-
     <field name="productName" class="java.lang.String"/>
     <field name="quantity" class="java.lang.Integer"/>
     <field name="price" class="java.math.BigDecimal"/>
 
-    <background>
-        <band splitType="Stretch"/>
-    </background>
 
     <title>
-        <band height="85" splitType="Stretch">
+        <band height="105">
+
             <textField>
-                <reportElement x="0" y="10" width="216" height="30" uuid="9fde145b-4689-4dab-a36e-b8534daedbc3"/>
-                <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="Franklin Gothic Medium" size="18" isBold="true"/>
-                </textElement>
+                <reportElement x="0" y="0" width="206" height="28"/> <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font fontName="Franklin Gothic Medium" size="18" isBold="true"/>
+            </textElement>
                 <textFieldExpression><![CDATA["CIPRIANJOS"]]></textFieldExpression>
             </textField>
-            <textField>
-                <reportElement x="0" y="45" width="216" height="13" uuid="f2fc2cb6-3934-4aed-82c8-e358d39bd7fa"/>
-                <textElement textAlignment="Center">
-                    <font fontName="Consolas" size="9"/>
-                </textElement>
-                <textFieldExpression><![CDATA["Venda: " + $P{ticketId}]]></textFieldExpression>
-            </textField>
-            <textField>
-                <reportElement x="0" y="58" width="216" height="13" uuid="22d75770-cbca-4ebe-a265-ce24576c2c1c"/>
-                <textElement textAlignment="Center">
-                    <font fontName="Consolas" size="8"/>
-                </textElement>
-                <textFieldExpression><![CDATA[$P{date}]]></textFieldExpression>
-            </textField>
+
+            <staticText>
+                <reportElement x="0" y="35" width="206" height="10"/> <textElement textAlignment="Center">
+                <font fontName="Consolas" size="8"/>
+            </textElement>
+                <text><![CDATA[RUA FRUTUOSO BARBOSA, 80]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="0" y="47" width="206" height="10"/> <textElement textAlignment="Center">
+                <font fontName="Consolas" size="8"/>
+            </textElement>
+                <text><![CDATA[-- SAO PAULO - SP --]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="0" y="59" width="206" height="10"/> <textElement textAlignment="Center">
+                <font fontName="Consolas" size="8"/>
+            </textElement>
+                <text><![CDATA[Tel.: (11) 98256-1378]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="0" y="71" width="206" height="10"/> <textElement textAlignment="Center">
+                <font fontName="Consolas" size="8"/>
+            </textElement>
+                <text><![CDATA[CNPJ: 44680215000176]]></text>
+            </staticText>
+
             <line>
-                <reportElement x="0" y="80" width="216" height="1" uuid="550e8400-e29b-41d4-a716-446655440001"/>
-                <graphicElement>
-                    <pen lineStyle="Dashed"/>
-                </graphicElement>
+                <reportElement x="0" y="95" width="206" height="1"/> <graphicElement>
+                <pen lineStyle="Dashed"/>
+            </graphicElement>
             </line>
+
         </band>
     </title>
 
+
     <pageHeader>
-        <band height="35" splitType="Stretch">
+        <band height="34">
+
             <textField>
-                <reportElement x="0" y="2" width="216" height="12" uuid="7a12be1a-a13c-4223-9015-3560a702464d"/>
-                <textElement>
-                    <font fontName="Consolas" size="9"/>
-                </textElement>
-                <textFieldExpression><![CDATA["Cliente: Balcão"]]></textFieldExpression>
+                <reportElement x="0" y="0" width="206" height="12"/> <textElement textAlignment="Center">
+                <font fontName="Consolas" size="8"/>
+            </textElement>
+                <textFieldExpression><![CDATA[$P{date}]]></textFieldExpression>
             </textField>
+
             <textField>
-                <reportElement x="0" y="15" width="216" height="12" uuid="b8354b66-423f-44ca-9394-d9714eb4eba2"/>
-                <textElement>
-                    <font fontName="Consolas" size="9"/>
-                </textElement>
-                <textFieldExpression><![CDATA["Vendedor: " + $P{sellerName}]]></textFieldExpression>
+                <reportElement x="0" y="14" width="206" height="12"/> <textElement>
+                <font fontName="Consolas" size="9"/>
+            </textElement>
+                <textFieldExpression><![CDATA["Cliente: Venda ao consumidor"]]></textFieldExpression>
             </textField>
+
             <line>
-                <reportElement x="0" y="30" width="216" height="1" uuid="550e8400-e29b-41d4-a716-446655440002"/>
-                <graphicElement>
-                    <pen lineStyle="Dashed"/>
-                </graphicElement>
+                <reportElement x="0" y="28" width="206" height="1"/> <graphicElement>
+                <pen lineStyle="Dashed"/>
+            </graphicElement>
             </line>
+
         </band>
     </pageHeader>
 
+
     <columnHeader>
-        <band height="15" splitType="Stretch">
+        <band height="14">
+
             <textField>
-                <reportElement x="0" y="0" width="80" height="12" uuid="dd32480c-c324-4b87-8c08-b083890cd19a"/>
+                <reportElement x="0" y="0" width="80" height="12"/>
                 <textElement textAlignment="Left">
                     <font fontName="Consolas" size="8" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Desc"]]></textFieldExpression>
             </textField>
+
             <textField>
-                <reportElement x="80" y="0" width="80" height="12" uuid="a71ef1ef-0dbc-4198-93d6-b6b71dc11dab"/>
-                <textElement textAlignment="Center">
-                    <font fontName="Consolas" size="8" isBold="true"/>
-                </textElement>
+                <reportElement x="80" y="0" width="70" height="12"/> <textElement textAlignment="Center">
+                <font fontName="Consolas" size="8" isBold="true"/>
+            </textElement>
                 <textFieldExpression><![CDATA["Qtd x Un"]]></textFieldExpression>
             </textField>
+
             <textField>
-                <reportElement x="160" y="0" width="56" height="12" uuid="9716bf5f-0606-4a4d-b09e-cdd4f0a3f2ae"/>
-                <textElement textAlignment="Right">
-                    <font fontName="Consolas" size="8" isBold="true"/>
-                </textElement>
+                <reportElement x="150" y="0" width="56" height="12"/> <textElement textAlignment="Right">
+                <font fontName="Consolas" size="8" isBold="true"/>
+            </textElement>
                 <textFieldExpression><![CDATA["Total"]]></textFieldExpression>
             </textField>
+
         </band>
     </columnHeader>
 
+
     <detail>
-        <band height="14" splitType="Stretch">
+        <band height="14">
+
             <textField isStretchWithOverflow="true">
-                <reportElement x="0" y="0" width="80" height="12" uuid="d1a2b3c4-d5e6-4f7a-8b9c-0d1e2f3a4b5c"/>
+                <reportElement x="0" y="0" width="80" height="12"/>
                 <textElement>
                     <font fontName="Consolas" size="8"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{productName}]]></textFieldExpression>
             </textField>
+
             <textField>
-                <reportElement x="80" y="0" width="80" height="12" uuid="a6b7c8d9-e0f1-4a2b-3c4d-5e6f7a8b9c0d"/>
-                <textElement textAlignment="Center">
-                    <font fontName="Consolas" size="8"/>
-                </textElement>
-                <textFieldExpression>
-                    <![CDATA[$F{quantity} + " x " + $F{price}.divide(new java.math.BigDecimal($F{quantity}), 2, java.math.RoundingMode.HALF_UP)]]></textFieldExpression>
+                <reportElement x="80" y="0" width="70" height="12"/> <textElement textAlignment="Center">
+                <font fontName="Consolas" size="8"/>
+            </textElement>
+                <textFieldExpression><![CDATA[
+                    $F{quantity} + " x " +
+                    $F{price}.divide(new java.math.BigDecimal($F{quantity}), 2, java.math.RoundingMode.HALF_UP)
+                ]]></textFieldExpression>
             </textField>
+
             <textField>
-                <reportElement x="160" y="0" width="56" height="12" uuid="90595812-d021-4069-8599-806436717985"/>
-                <textElement textAlignment="Right">
-                    <font fontName="Consolas" size="8"/>
-                </textElement>
+                <reportElement x="150" y="0" width="56" height="12"/> <textElement textAlignment="Right">
+                <font fontName="Consolas" size="8"/>
+            </textElement>
                 <textFieldExpression><![CDATA[$F{price}]]></textFieldExpression>
             </textField>
+
         </band>
     </detail>
 
+
     <columnFooter>
-        <band height="80" splitType="Stretch">
+        <band height="62">
+
             <line>
-                <reportElement x="0" y="3" width="216" height="1" uuid="550e8400-e29b-41d4-a716-446655440003"/>
-                <graphicElement>
-                    <pen lineStyle="Dashed"/>
-                </graphicElement>
+                <reportElement x="0" y="4" width="206" height="1"/> <graphicElement>
+                <pen lineStyle="Dashed"/>
+            </graphicElement>
             </line>
 
             <textField>
-                <reportElement x="0" y="10" width="100" height="12" uuid="0e035946-b89a-4ec4-b417-e05e52fd99d1"/>
+                <reportElement x="0" y="12" width="100" height="12"/>
                 <textElement textAlignment="Left">
                     <font fontName="Consolas" size="9"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Subtotal:"]]></textFieldExpression>
             </textField>
+
             <textField>
-                <reportElement x="100" y="10" width="116" height="12" uuid="aa7b2cb2-75fa-4887-ab46-d88725e14257"/>
-                <textElement textAlignment="Right">
-                    <font fontName="Consolas" size="9" isBold="true"/>
-                </textElement>
+                <reportElement x="100" y="12" width="106" height="12"/> <textElement textAlignment="Right">
+                <font fontName="Consolas" size="9" isBold="true"/>
+            </textElement>
                 <textFieldExpression><![CDATA[$P{subtotal}]]></textFieldExpression>
             </textField>
 
             <textField>
-                <reportElement x="0" y="22" width="100" height="12" uuid="8df2f0b6-b3dc-4ba9-bfd1-65dd7ef63c47"/>
+                <reportElement x="0" y="26" width="100" height="12"/>
                 <textElement textAlignment="Left">
                     <font fontName="Consolas" size="9"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Desconto:"]]></textFieldExpression>
             </textField>
+
             <textField>
-                <reportElement x="100" y="22" width="116" height="12" uuid="e162a300-f995-484e-a94a-ce0d9b3e85c6"/>
-                <textElement textAlignment="Right">
-                    <font fontName="Consolas" size="9"/>
-                </textElement>
+                <reportElement x="100" y="26" width="106" height="12"/> <textElement textAlignment="Right">
+                <font fontName="Consolas" size="9"/>
+            </textElement>
                 <textFieldExpression><![CDATA[$P{discount}]]></textFieldExpression>
             </textField>
 
             <textField>
-                <reportElement x="0" y="40" width="100" height="14" uuid="e68a70d9-5b94-4a4b-99f1-6f767bd1b2ba"/>
+                <reportElement x="0" y="42" width="100" height="14"/>
                 <textElement textAlignment="Left">
                     <font fontName="Consolas" size="10" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA["TOTAL:"]]></textFieldExpression>
             </textField>
+
             <textField>
-                <reportElement x="100" y="40" width="116" height="14" uuid="f4340b67-a9a0-4144-a6aa-0b510cc3561b"/>
-                <textElement textAlignment="Right">
-                    <font fontName="Consolas" size="10" isBold="true"/>
-                </textElement>
+                <reportElement x="100" y="42" width="106" height="14"/> <textElement textAlignment="Right">
+                <font fontName="Consolas" size="10" isBold="true"/>
+            </textElement>
                 <textFieldExpression><![CDATA[$P{totalPrice}]]></textFieldExpression>
             </textField>
-            <line>
-                <reportElement x="0" y="60" width="216" height="1" uuid="550e8400-e29b-41d4-a716-446655440004"/>
-                <graphicElement>
-                    <pen lineStyle="Dashed"/>
-                </graphicElement>
-            </line>
+
         </band>
     </columnFooter>
 
+
     <pageFooter>
-        <band height="60" splitType="Stretch">
+        <band height="45">
+
             <textField isStretchWithOverflow="true">
-                <reportElement x="0" y="0" width="216" height="30" uuid="5d72c450-4794-4798-96f3-30b4ebefeb95"/>
-                <textElement textAlignment="Left">
-                    <font fontName="Consolas" size="8"/>
-                </textElement>
-                <textFieldExpression><![CDATA["Obs: " + ($P{observation} != null ? $P{observation} : "")]]></textFieldExpression>
+                <reportElement x="0" y="0" width="206" height="20"/> <textElement textAlignment="Left">
+                <font fontName="Consolas" size="8"/>
+            </textElement>
+                <textFieldExpression><![CDATA[
+                    "Obs: " + ($P{observation} != null ? $P{observation} : "")
+                ]]></textFieldExpression>
             </textField>
+
             <textField>
-                <reportElement x="0" y="35" width="216" height="15" uuid="eddb7de9-c8be-41ef-80d3-fe6b68a03790"/>
-                <textElement textAlignment="Center">
-                    <font fontName="Consolas" size="9" isBold="true"/>
-                </textElement>
+                <reportElement x="0" y="26" width="206" height="14"/> <textElement textAlignment="Center">
+                <font fontName="Consolas" size="9" isBold="true"/>
+            </textElement>
                 <textFieldExpression><![CDATA["Volte sempre!"]]></textFieldExpression>
             </textField>
+
         </band>
     </pageFooter>
+
 </jasperReport>
