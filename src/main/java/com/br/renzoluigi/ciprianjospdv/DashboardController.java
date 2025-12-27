@@ -3,6 +3,9 @@ package com.br.renzoluigi.ciprianjospdv;
 import com.br.renzoluigi.ciprianjospdv.dto.CustomerData;
 import com.br.renzoluigi.ciprianjospdv.db.DatabaseManager;
 import com.br.renzoluigi.ciprianjospdv.dto.ProductData;
+import com.br.renzoluigi.ciprianjospdv.model.Product;
+import com.br.renzoluigi.ciprianjospdv.model.ProductDAO;
+import com.br.renzoluigi.ciprianjospdv.model.ProductDAOImpl;
 import com.br.renzoluigi.ciprianjospdv.util.FormatPrice;
 import com.br.renzoluigi.ciprianjospdv.util.GetData;
 import javafx.collections.FXCollections;
@@ -42,6 +45,9 @@ import java.sql.*;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static javafx.scene.control.Alert.AlertType.ERROR;
+import static javafx.scene.control.Alert.AlertType.INFORMATION;
 
 public class DashboardController implements Initializable {
     @FXML
@@ -138,12 +144,6 @@ public class DashboardController implements Initializable {
     private ComboBox<String> orders_name;
 
     @FXML
-    private ComboBox<String> orders_brand;
-
-    @FXML
-    private ComboBox<String> orders_type;
-
-    @FXML
     private TableColumn<ProductData, String> orders_col_type;
 
     @FXML
@@ -170,6 +170,9 @@ public class DashboardController implements Initializable {
     @FXML
     private TextField orders_barcode;
 
+    @FXML
+    private TextField orders_nameField;
+
     private Alert alert;
 
     private double y = 0;
@@ -183,8 +186,6 @@ public class DashboardController implements Initializable {
     private Image image;
 
     private int customerId;
-
-    private final String[] ordersListType = {"Borracha", "Caneta", "Caderno", "Papel", "Lápis", "Outros"};
 
     // ADD PRODUCTS PANE
 
@@ -205,12 +206,7 @@ public class DashboardController implements Initializable {
 
             home_numberOrders.setText(String.valueOf(countOrders));
         } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, e.getMessage());
         }
     }
 
@@ -232,12 +228,7 @@ public class DashboardController implements Initializable {
 
             home_totalIncome.setText(FormatPrice.bigDecimalToString(totalIncome));
         } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, e.getMessage());
         }
     }
 
@@ -258,12 +249,7 @@ public class DashboardController implements Initializable {
 
             home_availableProducts.setText(String.valueOf(countAvailableProducts));
         } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, e.getMessage());
         }
     }
 
@@ -286,12 +272,7 @@ public class DashboardController implements Initializable {
             home_incomeChart.getData().add(chart);
 
         } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, e.getMessage());
         }
     }
 
@@ -315,199 +296,127 @@ public class DashboardController implements Initializable {
             home_ordersChart.getData().add(chart);
 
         } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, e.getMessage());
         }
     }
 
     public void addProductsAdd() {
-
-        String sql = "INSERT INTO product(barcode, type, brand, name, price, quantity, image, register_date)" +
-                "VALUES(?,?,?,?,?,?,?,?)";
-        connection = DatabaseManager.getConnection();
+        if (addProductsFieldsAreEmpty()) {
+            showAlert(ERROR, "Por favor, preencha todos os campos.");
+            return;
+        }
 
         try {
-            if (addProducts_barcode.getText().isBlank()
-                    || addProducts_name.getText().isBlank()
-                    || addProducts_brand.getText().isBlank()
-                    || addProducts_quantity.getText().isBlank()
-                    || addProducts_type.getSelectionModel().getSelectedItem() == null
-                    || addProducts_price.getText().isBlank()) {
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Mensagem de erro");
-                alert.setHeaderText(null);
-                alert.setContentText("Por favor, preencha todos os campos.");
-                alert.showAndWait();
-                return;
-            }
+            Product product = new Product(
+                    addProducts_barcode.getText(),
+                    addProducts_type.getValue(),
+                    addProducts_brand.getText(),
+                    addProducts_name.getText(),
+                    FormatPrice.stringToBigDecimal(addProducts_price.getText()),
+                    Integer.parseInt(addProducts_quantity.getText()),
+                    GetData.path,
+                    new Date(System.currentTimeMillis())
+            );
 
-            String checkData = "SELECT barcode FROM product WHERE barcode = '" +
-                    addProducts_barcode.getText() + "'";
-
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery(checkData);
-
-            if (resultSet.next()) {
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setHeaderText(null);
-                alert.setTitle("Mensagem de erro");
-                alert.setContentText("Já existe um produto com o código de barras: " + addProducts_barcode.getText());
-                alert.showAndWait();
-            } else {
-                BigDecimal price = FormatPrice.stringToBigDecimal(addProducts_price.getText());
-                int quantity = Integer.parseInt(addProducts_quantity.getText().trim());
-
-                preparedStatement = connection.prepareStatement(sql);
-                preparedStatement.setString(1, addProducts_barcode.getText().trim());
-                preparedStatement.setString(2, addProducts_type.getSelectionModel().getSelectedItem());
-                preparedStatement.setString(3, addProducts_brand.getText().trim());
-                preparedStatement.setString(4, addProducts_name.getText().trim());
-                preparedStatement.setBigDecimal(5, price);
-                preparedStatement.setInt(6, quantity);
-                if (GetData.path == null) {
-                    preparedStatement.setString(7, null);
-                } else {
-                    preparedStatement.setString(7, GetData.path.replace("\\", "\\\\"));
-                }
-                preparedStatement.setDate(8, new Date(System.currentTimeMillis()));
-
-                preparedStatement.executeUpdate();
-
-                addProductsShowListData();
-                addProductsClear();
-            }
+            ProductDAO dao = new ProductDAOImpl();
+            dao.save(product);
         } catch (NumberFormatException nfe) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText(null);
-            alert.setContentText("Preço ou quantidade possuem formato inválido.");
-            alert.showAndWait();
-            nfe.printStackTrace();
+            showAlert(ERROR, "Preço ou quantidade possuem formato inválido.");
         } catch (SQLException e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText(null);
             if (e.getErrorCode() == 23505) {
-                alert.setContentText("Já existe um produto com este código de barras.");
-            } else {
-                alert.setContentText("Falha ao inserir produto: " + e.getMessage());
+                showAlert(ERROR, "Já existe um produto com este código de barras.");
             }
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, "Falha ao inserir produto: " + e.getMessage());
+        } catch (Exception e) {
+            showAlert(ERROR, e.getMessage());
         }
     }
 
+    private void showAlert(Alert.AlertType alertType, String message) { // header based on alertType
+        // alertType factory
+    }
+
+    private boolean addProductsFieldsAreEmpty() {
+        return addProducts_barcode.getText().isBlank()
+                || addProducts_name.getText().isBlank()
+                || addProducts_brand.getText().isBlank()
+                || addProducts_quantity.getText().isBlank()
+                || addProducts_type.getSelectionModel().getSelectedItem() == null
+                || addProducts_price.getText().isBlank();
+    }
+
     public void addProductsUpdate() {
+        if (addProductsFieldsAreEmpty()) {
+            showAlert(ERROR, "Por favor, preencha todos os campos.");
+            return;
+        }
+        try {
+            updateProduct();
+        } catch (NumberFormatException nfe) {
+            showAlert(ERROR, "Preço ou quantidade possuem formato inválido.");
+        } catch (SQLException e) {
+            showAlert(ERROR, "Falha ao atualizar produto: " + e.getMessage());
+        }
+    }
+
+    public void updateProduct() throws SQLException {
         String uri = (GetData.path == null || GetData.path.isBlank()) ? null : GetData.path.replace("\\", "\\\\");
         String sql = "UPDATE product " + "SET type = ?, brand = ?, name = ?, price = ?, quantity = ?, image = ? " +
                 "WHERE barcode = ?";
 
-        connection = DatabaseManager.getConnection();
+        String checkData = "SELECT barcode FROM product WHERE barcode = '"
+                + addProducts_barcode.getText() + "'";
+        statement = connection.createStatement();
+        resultSet = statement.executeQuery(checkData);
 
-        try {
-            if (addProducts_barcode.getText().isBlank()
-                    || addProducts_name.getText().isBlank()
-                    || addProducts_brand.getText().isBlank()
-                    || addProducts_quantity.getText().isBlank()
-                    || addProducts_type.getSelectionModel().getSelectedItem() == null
-                    || addProducts_price.getText().isBlank()) {
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Mensagem de erro");
-                alert.setHeaderText(null);
-                alert.setContentText("Por favor, preencha todos os campos.");
-                alert.showAndWait();
-                return;
-            }
+        if (resultSet.next()) {
+            BigDecimal price = FormatPrice.stringToBigDecimal(addProducts_price.getText());
+            int quantity = Integer.parseInt(addProducts_quantity.getText().trim());
 
-            String checkData = "SELECT barcode FROM product WHERE barcode = '"
-                    + addProducts_barcode.getText() + "'";
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery(checkData);
-
-            if (resultSet.next()) {
-                BigDecimal price = FormatPrice.stringToBigDecimal(addProducts_price.getText());
-                int quantity = Integer.parseInt(addProducts_quantity.getText().trim());
-
-                alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Mensagem de confirmação");
-                alert.setHeaderText(null);
-                alert.setContentText("Tem certeza que deseja atualizar o produto: " + addProducts_barcode.getText() + "?");
-
-                Optional<ButtonType> option = alert.showAndWait();
-                if (option.isEmpty() || option.get() != ButtonType.OK) return;
-
-                preparedStatement = connection.prepareStatement(sql);
-                preparedStatement.setString(1, addProducts_type.getSelectionModel().getSelectedItem());
-                preparedStatement.setString(2, addProducts_brand.getText().trim());
-                preparedStatement.setString(3, addProducts_name.getText().trim());
-                preparedStatement.setBigDecimal(4, price);
-                preparedStatement.setInt(5, quantity);
-                if (uri == null) {
-                    preparedStatement.setNull(6, Types.VARCHAR);
-                } else {
-                    preparedStatement.setString(6, uri);
-                }
-                preparedStatement.setString(7, addProducts_barcode.getText().trim());
-
-                preparedStatement.executeUpdate();
-
-                alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Mensagem de informação");
-                alert.setHeaderText(null);
-                alert.setContentText("Atualizado com sucesso");
-                alert.showAndWait();
-
-                addProductsShowListData();
-                addProductsClear();
-            } else {
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Mensagem de erro");
-                alert.setHeaderText(null);
-                alert.setContentText("Produto com o código de barras: "
-                        + addProducts_barcode.getText() + "não encontrado.");
-                alert.showAndWait();
-            }
-        } catch (NumberFormatException nfe) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
+            alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Mensagem de confirmação");
             alert.setHeaderText(null);
-            alert.setContentText("Preço ou quantidade possuem formato inválido.");
-            alert.showAndWait();
-            nfe.printStackTrace();
-        } catch (SQLException e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor");
-            alert.setContentText("Falha ao atualizar produto: " + e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            alert.setContentText("Tem certeza que deseja atualizar o produto: " + addProducts_barcode.getText() + "?");
+
+            Optional<ButtonType> option = alert.showAndWait();
+
+            if (option.isEmpty() || option.get() != ButtonType.OK) return;
+
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, addProducts_type.getSelectionModel().getSelectedItem());
+            preparedStatement.setString(2, addProducts_brand.getText().trim());
+            preparedStatement.setString(3, addProducts_name.getText().trim());
+            preparedStatement.setBigDecimal(4, price);
+            preparedStatement.setInt(5, quantity);
+            if (uri == null) {
+                preparedStatement.setNull(6, Types.VARCHAR);
+            } else {
+                preparedStatement.setString(6, uri);
+            }
+            preparedStatement.setString(7, addProducts_barcode.getText().trim());
+
+            preparedStatement.executeUpdate();
+
+            showAlert(INFORMATION, "Atualizado com sucesso");
+
+            addProductsShowListData();
+            addProductsClear();
+        } else {
+            showAlert(ERROR, "Produto com o código de barras: " + addProducts_barcode.getText() +
+                    "não encontrado.");
         }
     }
 
     public void addProductsDelete() {
+        if (addProductsFieldsAreEmpty()) {
+            showAlert(ERROR, "Por favor, preencha todos os campos.");
+            return;
+        }
         String sql = "DELETE FROM product WHERE barcode = '" + addProducts_barcode.getText() + "'";
 
         connection = DatabaseManager.getConnection();
 
         try {
-            if (addProducts_barcode.getText().isBlank()
-                    || addProducts_name.getText().isBlank()
-                    || addProducts_brand.getText().isBlank()
-                    || addProducts_quantity.getText().isBlank()
-                    || addProducts_type.getSelectionModel().getSelectedItem() == null
-                    || addProducts_price.getText().isBlank()) {
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Mensagem de erro");
-                alert.setHeaderText(null);
-                alert.setContentText("Por favor, preencha todos os campos.");
-                alert.showAndWait();
-                return;
-            }
-
             String checkData = "SELECT barcode FROM product WHERE barcode = '" +
                     addProducts_barcode.getText() + "'";
             statement = connection.createStatement();
@@ -525,29 +434,16 @@ public class DashboardController implements Initializable {
                     statement = connection.createStatement();
                     statement.executeUpdate(sql);
 
-                    alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Mensagem de informação");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Deletado com sucesso");
-                    alert.showAndWait();
+                    showAlert(INFORMATION, "Deletado com sucesso");
 
                     addProductsClear();
                     addProductsShowListData();
                 }
             } else {
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Mensagem de erro");
-                alert.setHeaderText(null);
-                alert.setContentText("Não existe um produto com o código de barras: " + addProducts_barcode.getText());
-                alert.showAndWait();
+                showAlert(ERROR, "Não existe um produto com o código de barras: " + addProducts_barcode.getText());
             }
         } catch (SQLException e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, e.getMessage());
         }
     }
 
@@ -601,12 +497,7 @@ public class DashboardController implements Initializable {
                 productList.add(productData);
             }
         } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText(null);
-            alert.setContentText("Informe essa mensagem ao desenvolvedor: " + e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, "Informe essa mensagem ao desenvolvedor: " + e.getMessage());
         }
         return productList;
     }
@@ -684,13 +575,6 @@ public class DashboardController implements Initializable {
 
     // ORDERS PANE
 
-    public void ordersListType() {
-        List<String> listT = new ArrayList<>(Arrays.asList(ordersListType));
-
-        ObservableList<String> listData = FXCollections.observableArrayList(listT);
-        orders_type.setItems(listData);
-    }
-
     public void ordersReadBarcode() {
         if (orders_barcode.getText().isBlank()) return;
 
@@ -750,74 +634,35 @@ public class DashboardController implements Initializable {
                             preparedStatement.setDate(7, new Date(System.currentTimeMillis()));
                             preparedStatement.executeUpdate();
                         } catch (Exception e) {
-                            alert = new Alert(Alert.AlertType.ERROR);
-                            alert.setTitle("Mensagem de erro");
-                            alert.setHeaderText("Informe esse erro ao desenvolvedor");
-                            alert.setContentText(e.getMessage());
-                            alert.showAndWait();
-                            e.printStackTrace();
+                            showAlert(ERROR, e.getMessage());
                         }
                     }
                 } catch (Exception e) {
-                    alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Mensagem de erro");
-                    alert.setHeaderText("Informe esse erro ao desenvolvedor");
-                    alert.setContentText(e.getMessage());
-                    alert.showAndWait();
-                    e.printStackTrace();
+                    showAlert(ERROR, e.getMessage());
                 }
 
+                ordersClear();
                 showOrdersList();
             } else {
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Mensagem de erro");
-                alert.setHeaderText(null);
-                alert.setContentText("Nenhum produto encontrado com esse código de barras (" + orders_barcode.getText() + ")");
-                alert.showAndWait();
+                showAlert(ERROR, "Nenhum produto encontrado com esse código de barras (" + orders_barcode.getText() + ")");
             }
         } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, e.getMessage());
         }
-    }
-
-    public void ordersListBrand() {
-        String sql = "SELECT brand FROM product WHERE type = '" + orders_type.getSelectionModel().getSelectedItem() + "'";
-
-        connection = DatabaseManager.getConnection();
-
-        try {
-            preparedStatement = connection.prepareStatement(sql);
-            resultSet = preparedStatement.executeQuery();
-
-            ObservableList<String> availableBrands = FXCollections.observableArrayList();
-
-            while (resultSet.next()) {
-                availableBrands.add(resultSet.getString("brand"));
-            }
-            orders_brand.setItems(availableBrands);
-        } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
-        }
-
     }
 
     public void ordersListName() {
-        String sql = "SELECT name FROM product WHERE brand = '" + orders_brand.getSelectionModel().getSelectedItem() + "'";
+        if (orders_nameField.getText().length() < 3) {
+            showAlert(ERROR, "Nome do produto precisa ter ao menos 3 letras");
+            return;
+        }
 
+        String sql = "SELECT name FROM product WHERE LOWER(name) LIKE LOWER(?)";
         connection = DatabaseManager.getConnection();
 
         try {
             preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, orders_nameField.getText() + "%");
             resultSet = preparedStatement.executeQuery();
 
             ObservableList<String> availableNames = FXCollections.observableArrayList();
@@ -825,15 +670,13 @@ public class DashboardController implements Initializable {
             while (resultSet.next()) {
                 availableNames.add(resultSet.getString("name"));
             }
-
             orders_name.setItems(availableNames);
+
+            if (availableNames.isEmpty()) {
+                showAlert(ERROR, "Nenhum produto encontrado com esse nome");
+            }
         } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, e.getMessage());
         }
     }
 
@@ -847,8 +690,6 @@ public class DashboardController implements Initializable {
 
     public void ordersClear() {
         orders_barcode.clear();
-        orders_brand.getSelectionModel().clearSelection();
-        orders_type.getSelectionModel().clearSelection();
         orders_name.getSelectionModel().clearSelection();
         orders_quantitySpinner.setValue(0);
     }
@@ -872,30 +713,16 @@ public class DashboardController implements Initializable {
             discount = FormatPrice.stringToBigDecimal(discountText).setScale(2, RoundingMode.HALF_UP);
             showTotalPrice();
         } catch (NumberFormatException nfe) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText(null);
-            alert.setContentText("Valor inserido incorreto.");
-            alert.showAndWait();
-            nfe.printStackTrace();
+            showAlert(ERROR, "Valor inserido incorreto.");
         } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, e.getMessage());
         }
     }
 
     public void ordersDelete() {
         CustomerData selected = orders_table.getSelectionModel().getSelectedItem();
         if (selected == null) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText(null);
-            alert.setContentText("Primeiro selecione um item para remover");
-            alert.showAndWait();
+            showAlert(ERROR, "Primeiro selecione um item para remover");
             return;
         }
 
@@ -925,12 +752,7 @@ public class DashboardController implements Initializable {
             showTotalPrice();
             showOrdersList();
         } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, e.getMessage());
         }
     }
 
@@ -952,21 +774,17 @@ public class DashboardController implements Initializable {
 
             if (resultSet.next()) {
                 totalProductPrice = resultSet.getBigDecimal("price")
-                        .multiply(new BigDecimal(orders_quantity.getValue()));
+                        .multiply(new BigDecimal(orders_quantity.getValue())); //
             }
 
-            if (orders_type.getSelectionModel().getSelectedItem() == null || orders_quantity.getValue() == null
+            if (orders_quantity.getValue() == null
                     || orders_name.getSelectionModel().getSelectedItem() == null || totalProductPrice.doubleValue() == 0) {
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Mensagem de erro");
-                alert.setHeaderText(null);
-                alert.setContentText("Por favor, escolha o produto primeiro.");
-                alert.showAndWait();
+                showAlert(ERROR, "Por favor, escolha o produto primeiro.");
             } else {
                 preparedStatement = connection.prepareStatement(sql);
                 preparedStatement.setString(1, String.valueOf(customerId));
-                preparedStatement.setString(2, orders_type.getSelectionModel().getSelectedItem());
-                preparedStatement.setString(3, orders_brand.getSelectionModel().getSelectedItem());
+                preparedStatement.setString(2, "orders_type.getSelectionModel().getSelectedItem()");
+                preparedStatement.setString(3, "orders_brand.getSelectionModel().getSelectedItem()");
                 preparedStatement.setString(4, orders_name.getSelectionModel().getSelectedItem());
                 preparedStatement.setString(5, String.valueOf(orders_quantity.getValue()));
                 preparedStatement.setString(6, totalProductPrice.toString());
@@ -978,12 +796,7 @@ public class DashboardController implements Initializable {
                 showOrdersList();
             }
         } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, e.getMessage());
         }
     }
 
@@ -1008,22 +821,13 @@ public class DashboardController implements Initializable {
                 orders_total.setText(FormatPrice.bigDecimalToString(totalPrice));
             }
         } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, e.getMessage());
         }
     }
 
     public void ordersPay() {
         if (amountPrice == null) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText(null);
-            alert.setContentText("Pressione ENTER após inserir o valor recebido.");
-            alert.showAndWait();
+            showAlert(ERROR, "Pressione ENTER após inserir o valor recebido.");
             return;
         }
 
@@ -1051,11 +855,7 @@ public class DashboardController implements Initializable {
 
                     preparedStatement.executeUpdate();
 
-                    alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Mensagem de informação");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Concluído!");
-                    alert.showAndWait();
+                    showAlert(INFORMATION, "Mensagem de informação");
 
                     showOrdersList();
                     ordersClear();
@@ -1069,19 +869,10 @@ public class DashboardController implements Initializable {
                     orders_balance.setText(FormatPrice.bigDecimalToString(BigDecimal.ZERO));
                 }
             } else {
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Mensagem de erro");
-                alert.setHeaderText(null);
-                alert.setContentText("Preço ou valor recebido inválido.");
-                alert.showAndWait();
+                showAlert(ERROR, "Preço ou valor recebido inválido.");
             }
         } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor:");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, e.getMessage());
         }
     }
 
@@ -1097,25 +888,13 @@ public class DashboardController implements Initializable {
                     balance = (amountPrice.subtract(totalPrice));
                     orders_balance.setText(FormatPrice.bigDecimalToString(balance));
                 } else {
-                    alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Mensagem de erro");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Preço maior que valor recebido.");
-                    alert.showAndWait();
+                    showAlert(ERROR, "Preço maior que valor recebido.");
                 }
             } else {
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Mensagem de erro");
-                alert.setHeaderText(null);
-                alert.setContentText("Preço inválido (" + totalPrice + ")");
-                alert.showAndWait();
+                showAlert(ERROR, "Preço inválido (" + totalPrice + ")");
             }
         } else {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText(null);
-            alert.setContentText("Valor recebido não inserido.");
-            alert.showAndWait();
+            showAlert(ERROR, "Valor recebido não inserido.");
         }
     }
 
@@ -1148,12 +927,7 @@ public class DashboardController implements Initializable {
             }
 
         } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor:");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, e.getMessage());
         }
     }
 
@@ -1183,12 +957,7 @@ public class DashboardController implements Initializable {
             }
 
         } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor:");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, e.getMessage());
         }
         return listData;
     }
@@ -1236,12 +1005,7 @@ public class DashboardController implements Initializable {
                 orders_amount.clear();
                 orders_balance.setText(FormatPrice.bigDecimalToString(BigDecimal.ZERO));
             } catch (Exception e) {
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Mensagem de erro");
-                alert.setHeaderText("Informe esse erro ao desenvolvedor:");
-                alert.setContentText(e.getMessage());
-                alert.showAndWait();
-                e.printStackTrace();
+                showAlert(ERROR, e.getMessage());
             }
         }
     }
@@ -1279,12 +1043,7 @@ public class DashboardController implements Initializable {
                 JasperViewer.viewReport(jasperPrint, false);
             }
         } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, e.getMessage());
         }
     }
 
@@ -1368,12 +1127,7 @@ public class DashboardController implements Initializable {
 
 
         } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Mensagem de erro");
-            alert.setHeaderText("Informe esse erro ao desenvolvedor");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-            e.printStackTrace();
+            showAlert(ERROR, e.getMessage());
         }
     }
 
@@ -1406,25 +1160,6 @@ public class DashboardController implements Initializable {
         addProductsListType();
 
         showOrdersList();
-        ordersListType();
-        orders_type.valueProperty().addListener((observable, oldVal, newVal) -> {
-            if (newVal != null) {
-                orders_brand.getSelectionModel().clearSelection();
-                orders_name.getSelectionModel().clearSelection();
-                ordersListBrand();
-            } else {
-                orders_brand.getSelectionModel().clearSelection();
-                orders_name.getSelectionModel().clearSelection();
-            }
-        });
-        orders_brand.valueProperty().addListener((observable, oldVal, newVal) -> {
-            if (newVal != null) {
-                orders_name.getSelectionModel().clearSelection();
-                ordersListName();
-            } else {
-                orders_name.getSelectionModel().clearSelection();
-            }
-        });
         ordersSpinner();
     }
 }
